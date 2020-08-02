@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/welcomeFragment"
-        android:name="com.aliceresponde.countingapp.WelcomeFragment"
+        android:name="com.aliceresponde.countingapp.presentation.welcome.WelcomeFragment"
         android:label="fragment_welcome"
         tools:layout="@layout/fragment_welcome" >
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.aliceresponde.countingapp.MainFragment"
+        android:name="com.aliceresponde.countingapp.presentation.main.MainFragment"
         android:label="fragment_main"
         tools:layout="@layout/fragment_main" >
         <action

@@ -5,13 +5,16 @@
 
     <data>
 
+        <variable
+            name="viewModel"
+            type="com.aliceresponde.countingapp.presentation.main.MainViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/mainBackground"
-        tools:context=".MainFragment">
+        tools:context=".presentation.main.MainFragment">
 
         <SearchView
             android:id="@+id/searchBar"
@@ -29,6 +32,7 @@
 
         <View
             android:id="@+id/loadingSwipeToRefresh"
+            android:visibility="@{viewModel.swipeToRefreshVisibility}"
             android:elevation="5dp"
             android:layout_width="48dp"
             android:layout_height="48dp"
@@ -41,6 +45,7 @@
 
         <TextView
             android:id="@+id/countersLabel"
+            android:visibility="@{viewModel.counterListVisibility}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="23dp"
@@ -52,6 +57,7 @@
 
         <TextView
             android:id="@+id/totalCounters"
+            android:visibility="@{viewModel.counterListVisibility}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="7dp"
@@ -64,6 +70,7 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/countersList"
+            android:visibility="@{viewModel.counterListVisibility}"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="23dp"
@@ -75,6 +82,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/noDataContainer"
+            android:visibility="@{viewModel.noDataVisibility}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -109,6 +117,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/connectionErrorContainer"
+            android:visibility="@{viewModel.internetErrorVisibility}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -154,6 +163,7 @@
 
         <ProgressBar
             android:id="@+id/loading"
+            android:visibility="@{viewModel.loadingVisibility}"
             android:layout_width="48dp"
             android:layout_height="48dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -163,6 +173,7 @@
 
         <Button
             android:id="@+id/button"
+            android:visibility="@{viewModel.addCounterVisibility}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
