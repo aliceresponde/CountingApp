@@ -8,4 +8,25 @@
     <string name="retry">RETRY</string>
     <string name="connection_error_title">Couldn’t load the counters</string>
     <string name="connection_error_subtitle">The Internet connection appears to be offline.</string>
+    <string name="no_counters_title">When I started counting my blessings, \nmy whole life turned around.</string>
+    <string name="counter_sample">Number of times I’ve forgotten my mother’s name because I was high on Frugelés.</string>
+    <string name="sample_counter">Cups of coffe</string>
+
+    <string-array name="drinks">
+        <item>Cup of coffee</item>
+        <item>Glasses of water</item>
+        <item>Some More</item>
+    </string-array>
+
+    <string-array name="food">
+        <item>Hot-dogs</item>
+        <item>Cupcakes eaten</item>
+        <item>Chicken sandwich</item>
+    </string-array>
+
+    <string-array name="Misc">
+        <item>Times sneezed</item>
+        <item>Nap</item>
+        <item>Day Dreaming</item>
+    </string-array>
 </resources>

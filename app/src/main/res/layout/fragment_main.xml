@@ -25,6 +25,7 @@
             android:layout_marginRight="16dp"
             android:background="@drawable/ic_search_background"
             android:paddingLeft="16dp"
+            android:paddingRight="16dp"
             android:queryHint="@string/search_counters"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -45,12 +46,13 @@
 
         <TextView
             android:id="@+id/countersLabel"
-            android:visibility="@{viewModel.counterListVisibility}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="23dp"
             android:textSize="17sp"
             android:textStyle="bold"
+            android:visibility="@{viewModel.counterListVisibility}"
             app:layout_constraintStart_toStartOf="@+id/searchBar"
             app:layout_constraintTop_toBottomOf="@+id/searchBar"
             tools:text="4 Items" />
@@ -61,7 +63,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="7dp"
-            android:layout_marginLeft="7dp"
             android:textColor="@color/grayColor"
             android:textSize="17sp"
             app:layout_constraintStart_toEndOf="@+id/countersLabel"
@@ -70,15 +71,21 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/countersList"
-            android:visibility="@{viewModel.counterListVisibility}"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="23dp"
+            android:layout_marginBottom="16dp"
             android:elevation="5dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:orientation="vertical"
+            android:visibility="@{viewModel.counterListVisibility}"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toTopOf="@+id/button"
             app:layout_constraintEnd_toEndOf="@+id/searchBar"
             app:layout_constraintStart_toStartOf="@+id/searchBar"
-            app:layout_constraintTop_toBottomOf="@+id/countersLabel" />
+            app:layout_constraintTop_toBottomOf="@+id/countersLabel"
+            tools:itemCount="23"
+            tools:listitem="@layout/couner_item" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/noDataContainer"
@@ -107,7 +114,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:gravity="center_horizontal|center_vertical"
-                android:text="When I started counting my blessings, \nmy whole life turned around."
+                android:text="@string/no_counters_title"
                 android:textColor="@color/grayColor"
                 android:textSize="17sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -173,14 +180,16 @@
 
         <Button
             android:id="@+id/button"
-            android:visibility="@{viewModel.addCounterVisibility}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
-            android:background="@drawable/ic_orange_button"
+            android:layout_marginBottom="16dp"
+            android:padding="10dp"
+            android:background="@drawable/ic_solid_ellipse_background"
+            android:backgroundTint="@color/orangeColor"
             android:gravity="center_horizontal|center_vertical"
             android:text="@string/add_counter"
             android:textColor="@color/whiteColor"
+            android:visibility="@{viewModel.addCounterVisibility}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.504"
