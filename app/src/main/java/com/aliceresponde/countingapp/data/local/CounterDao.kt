@@ -5,10 +5,16 @@ import androidx.room.*
 @Dao
 interface CounterDao {
     @Query("SELECT * from counter_table")
-    fun getAllTransactions(): List<CounterEntity>
+    fun getAllCounters(): List<CounterEntity>
+
+    @Query("SELECT * from counter_table WHERE id =:id")
+    fun getCounterBy(id:String): CounterEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(counters: List<CounterEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(counter: CounterEntity)
 
     @Query("DELETE FROM counter_table")
     suspend fun deleteAll()
@@ -17,12 +23,12 @@ interface CounterDao {
     suspend fun delete(counter: CounterEntity)
 
     @Update
-    suspend fun updateTransaction(counter: CounterEntity)
+    suspend fun updateCounter(counter: CounterEntity)
 
     @Transaction
     suspend fun restoreData(counters: List<CounterEntity>): List<CounterEntity> {
         deleteAll()
         insertAll(counters)
-        return getAllTransactions()
+        return getAllCounters()
     }
 }

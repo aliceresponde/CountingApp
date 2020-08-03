@@ -1,19 +1,15 @@
 package com.aliceresponde.countingapp.presentation.main
 
-import android.opengl.Visibility
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import androidx.constraintlayout.solver.GoalRow
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.aliceresponde.countingapp.domain.DecreaseCounterUseCase
 import com.aliceresponde.countingapp.domain.model.Counter
-import com.aliceresponde.countingapp.domain.model.ErrorState
-import com.aliceresponde.countingapp.domain.model.SuccessState
-import com.aliceresponde.countingapp.domain.usecase.delete.DeleteCounterUseCase
-import com.aliceresponde.countingapp.domain.usecase.increase.IncreaseCounterUseCase
+import com.aliceresponde.countingapp.domain.model.ErrorViewState
+import com.aliceresponde.countingapp.domain.model.SuccessViewState
 import com.aliceresponde.countingapp.domain.usecase.getcounters.GetCountersUseCase
 import dagger.hilt.android.scopes.ActivityScoped
 import kotlinx.coroutines.Dispatchers.IO
@@ -21,11 +17,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @ActivityScoped
-class MainViewModel(
-    private val getCountersUC: GetCountersUseCase,
-    private val increaseCounterUC: IncreaseCounterUseCase,
-    private val decreaseCounterUC: DecreaseCounterUseCase,
-    private val deleteCounterUC: DeleteCounterUseCase
+class MainViewModel @ViewModelInject constructor(
+    private val getCountersUC: GetCountersUseCase
+//    ,
+//    private val increaseCounterUC: IncreaseCounterUseCase,
+//    private val decreaseCounterUC: DecreaseCounterUseCase,
+//    private val deleteCounterUC: DeleteCounterUseCase
 ) : ViewModel() {
 
     private val _loadingVisibility = MutableLiveData<Int>(GONE)
@@ -61,51 +58,51 @@ class MainViewModel(
                 showLoading()
                 val result = getCountersUC()
                 when (result) {
-                    is SuccessState -> setupUiContent(result.data ?: listOf())
-                    is ErrorState -> showInternetError()
+                    is SuccessViewState -> setupUiContent(result.data ?: listOf())
+                    is ErrorViewState -> showInternetError()
                 }
             }
         }
     }
-
-    fun increaseCounter(counter: Counter) {
-        viewModelScope.launch {
-            withContext(IO) {
-                showLoading()
-                val result = increaseCounterUC(counter.id)
-                when (result) {
-                    is SuccessState -> setupUiContent(result.data ?: listOf())
-                    is ErrorState -> showInternetError()
-                }
-            }
-        }
-    }
-
-    fun decreaseCounter(counter: Counter, position: Int) {
-        viewModelScope.launch {
-            withContext(IO) {
-                showLoading()
-                val result = decreaseCounterUC(counter.id)
-                when (result) {
-                    is SuccessState -> setupUiContent(result.data ?: listOf())
-                    is ErrorState -> showInternetError()
-                }
-            }
-        }
-    }
-
-    fun delete(counter: Counter) {
-        viewModelScope.launch {
-            withContext(IO) {
-                showLoading()
-                val result = deleteCounterUC(counter.id)
-                when (result) {
-                    is SuccessState -> setupUiContent(result.data ?: listOf())
-                    is ErrorState -> showInternetError()
-                }
-            }
-        }
-    }
+//
+//    fun increaseCounter(counter: Counter) {
+//        viewModelScope.launch {
+//            withContext(IO) {
+//                showLoading()
+//                val result = increaseCounterUC(counter.id)
+//                when (result) {
+//                    is SuccessState -> setupUiContent(result.data ?: listOf())
+//                    is ErrorState -> showInternetError()
+//                }
+//            }
+//        }
+//    }
+//
+//    fun decreaseCounter(counter: Counter, position: Int) {
+//        viewModelScope.launch {
+//            withContext(IO) {
+//                showLoading()
+//                val result = decreaseCounterUC(counter.id)
+//                when (result) {
+//                    is SuccessState -> setupUiContent(result.data ?: listOf())
+//                    is ErrorState -> showInternetError()
+//                }
+//            }
+//        }
+//    }
+//
+//    fun delete(counter: Counter) {
+//        viewModelScope.launch {
+//            withContext(IO) {
+//                showLoading()
+//                val result = deleteCounterUC(counter.id)
+//                when (result) {
+//                    is SuccessState -> setupUiContent(result.data ?: listOf())
+//                    is ErrorState -> showInternetError()
+//                }
+//            }
+//        }
+//    }
 
     private fun setupUiContent(counters: List<Counter>) {
         if (counters.isEmpty()) showEmptyData()

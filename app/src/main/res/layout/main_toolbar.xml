@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/cruzBtn"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="@dimen/menu_icon_padding"
+            android:src="@drawable/ic_cruz"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/selectedItems"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:textColor="@color/blackColor"
+            android:textSize="17sp"
+            app:layout_constraintBottom_toBottomOf="@id/cruzBtn"
+            app:layout_constraintStart_toEndOf="@id/cruzBtn"
+            app:layout_constraintTop_toTopOf="@id/cruzBtn"
+            tools:text="1 Selected" />
+
+        <ImageView
+            android:id="@+id/deleteView"
+            android:layout_width="@dimen/icon_size"
+            android:layout_height="@dimen/icon_size"
+            android:layout_marginRight="24dp"
+            android:padding="@dimen/menu_icon_padding"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_delete"
+            app:layout_constraintBottom_toBottomOf="@id/cruzBtn"
+            app:layout_constraintEnd_toStartOf="@id/shareBtn"
+            app:layout_constraintTop_toTopOf="@id/cruzBtn" />
+
+        <ImageView
+            android:id="@+id/shareBtn"
+            android:layout_width="@dimen/icon_size"
+            android:layout_height="@dimen/icon_size"
+            android:layout_marginEnd="16dp"
+            android:padding="@dimen/menu_icon_padding"
+            android:src="@drawable/ic_share"
+            app:layout_constraintBottom_toBottomOf="@id/cruzBtn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/cruzBtn" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.appcompat.widget.Toolbar>

@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId "com.aliceresponde.countingapp"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -47,7 +47,6 @@ kapt {
 }
 
 dependencies {
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     def nav_version = '2.3.0'
     def room_version = '2.2.5'
     def materialVersion = '1.1.0'
@@ -62,6 +61,8 @@ dependencies {
 
     //  Material
     implementation "com.google.android.material:material:$materialVersion"
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    implementation 'androidx.recyclerview:recyclerview-selection:1.0.0'
 
     //ViewModel & LiveData
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0-alpha06'
