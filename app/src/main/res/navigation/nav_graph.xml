@@ -25,7 +25,7 @@
     </fragment>
     <fragment
         android:id="@+id/createItemkFragment"
-        android:name="com.aliceresponde.countingapp.CreateItemkFragment"
+        android:name="com.aliceresponde.countingapp.presentation.createcounter.CreateItemkFragment"
         android:label="fragment_create_itemk"
         tools:layout="@layout/fragment_create_itemk" >
         <action
@@ -34,7 +34,7 @@
     </fragment>
     <fragment
         android:id="@+id/counterSampleFragment"
-        android:name="com.aliceresponde.countingapp.CounterSampleFragment"
+        android:name="com.aliceresponde.countingapp.presentation.countersample.CounterSampleFragment"
         android:label="fragment_counter_sample"
         tools:layout="@layout/fragment_counter_sample" />
 </navigation>

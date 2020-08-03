@@ -16,39 +16,38 @@
         android:padding="5dp"
         android:textColor="@color/counterColor"
         android:textSize="17sp"
-        app:layout_constraintEnd_toStartOf="@+id/minus"
+        app:layout_constraintEnd_toStartOf="@+id/decreaseView"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="@string/counter_sample" />
 
     <ImageView
-        android:id="@+id/minus"
+        android:id="@+id/decreaseView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-
         android:background="@drawable/ic_minus"
-        app:layout_constraintBottom_toBottomOf="@+id/plus"
-        app:layout_constraintEnd_toStartOf="@+id/amount"
-        app:layout_constraintTop_toTopOf="@+id/plus"
+        app:layout_constraintBottom_toBottomOf="@+id/increaseView"
+        app:layout_constraintEnd_toStartOf="@+id/amountTextView"
+        app:layout_constraintTop_toTopOf="@+id/increaseView"
         app:layout_constraintVertical_bias="0.44" />
 
     <TextView
-        android:id="@+id/amount"
+        android:id="@+id/amountTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:textSize="17sp"
-        app:layout_constraintBottom_toBottomOf="@+id/plus"
-        app:layout_constraintEnd_toStartOf="@+id/plus"
-        app:layout_constraintTop_toTopOf="@+id/plus"
+        app:layout_constraintBottom_toBottomOf="@+id/increaseView"
+        app:layout_constraintEnd_toStartOf="@+id/increaseView"
+        app:layout_constraintTop_toTopOf="@+id/increaseView"
         tools:text="200" />
 
     <ImageView
-        android:id="@+id/plus"
+        android:id="@+id/increaseView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
