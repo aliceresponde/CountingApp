@@ -44,17 +44,20 @@ class MainFragment : Fragment(), CounterAdapterListeners {
                     adapter.filter.filter(newText)
                     return false
                 }
-
             })
             createCounterBtn.setOnClickListener { navigateToCreateCounterFragment() }
-            swipeToRefresh.setOnRefreshListener { this@MainFragment.viewModel.getAllCounters() }
-            cruzBtn.setOnClickListener { this@MainFragment.viewModel.removeCurrentSelection() }
+            swipeToRefresh.setOnRefreshListener {
+                this@MainFragment.viewModel.getAllCounters()
+                swipeToRefresh.isRefreshing = false
+            }
+            cruzBtn.setOnClickListener { this@MainFragment.viewModel.clearCurrentSelection() }
             deleteView.setOnClickListener { showDeleteCounterDialog() }
         }
 
         viewModel.counters.observe(viewLifecycleOwner, Observer { adapter.update(it) })
         viewModel.selectedCounters.observe(viewLifecycleOwner, Observer {
-            adapter.selectCounter(it.last())
+            if (it.isNotEmpty()) adapter.selectCounter(it.last())
+            else adapter.removeSelectedCounters()
         })
         viewModel.getAllCounters()
         return binding.root

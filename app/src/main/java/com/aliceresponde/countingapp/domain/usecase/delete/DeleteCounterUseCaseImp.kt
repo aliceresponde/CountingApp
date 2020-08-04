@@ -12,8 +12,7 @@ import com.aliceresponde.countingapp.repository.SuccessState
 class DeleteCounterUseCaseImp(private val repository: CounterRepository) : DeleteCounterUseCase {
     override suspend fun invoke(id: String): UiState<List<Counter>> {
         return try {
-            val result = repository.deleteCounter(id)
-            when (result) {
+            when (val result = repository.deleteCounter(id)) {
                 is SuccessState -> {
                     val data = result.data ?: listOf()
                     SuccessViewState(data.map { Counter(it.id, it.title, it.count) })

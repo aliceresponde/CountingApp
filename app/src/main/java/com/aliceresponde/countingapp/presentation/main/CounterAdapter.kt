@@ -61,6 +61,7 @@ class CounterAdapter(
                 }else{
                     amountGroup.visibility = VISIBLE
                     selectedIcon.visibility = GONE
+                    itemView.setBackgroundResource(0)
                 }
 
                 amountTextView.text = counter.count.toString()

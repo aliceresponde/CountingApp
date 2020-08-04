@@ -100,6 +100,7 @@ class MainViewModel @ViewModelInject constructor(
     fun deleteSelectedCounter() {
         // todo check if can I delete just a counter
         val counter = selectedCounters.value!!.last()
+        _selectedCounters.value!!.remove(counter)
         viewModelScope.launch {
             withContext(IO) {
                 showLoading()
@@ -202,7 +203,11 @@ class MainViewModel @ViewModelInject constructor(
         _selectedCounters.postValue(current)
     }
 
-    fun removeCurrentSelection() {
+    fun clearCurrentSelection() {
+        _counterListVisibility.postValue(VISIBLE)
+        _addCounterVisibility.postValue(VISIBLE)
+        _searchBarVisibility.postValue(VISIBLE)
+        _selectedItemBarVisibility.postValue(GONE)
         _selectedCounters.postValue(mutableListOf())
     }
 }
