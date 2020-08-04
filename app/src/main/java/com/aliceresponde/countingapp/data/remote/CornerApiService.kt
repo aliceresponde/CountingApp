@@ -10,7 +10,9 @@ import retrofit2.http.*
 
 interface CornerApiService {
     companion object {
-        private const val BASE_URL = "http://10.0.2.2:3000/"
+        private const val BASE_URL = "https://d112483dea9b.ngrok.io/"
+            //"http://192.168.18.56:3000"
+            //"http://10.0.2.2:3000/"   virtual device
 
         operator fun invoke(interceptor: Interceptor): CornerApiService {
             val logInterceptor = HttpLoggingInterceptor().apply {

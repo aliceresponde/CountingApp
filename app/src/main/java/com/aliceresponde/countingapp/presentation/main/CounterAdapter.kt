@@ -3,6 +3,8 @@ package com.aliceresponde.countingapp.presentation.main
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
@@ -18,9 +20,11 @@ import kotlin.collections.ArrayList
 
 class CounterAdapter(
     private var data: MutableList<Counter> = mutableListOf(),
+    private val selectedItems: MutableList<Counter> = mutableListOf(),
     private val callback: CounterAdapterListeners
 ) :
     RecyclerView.Adapter<CounterAdapter.CounterViewHolder>(), Filterable {
+    private var isAnySelected: Boolean = selectedItems.size > 0
     private val differCallback = object : DiffUtil.ItemCallback<Counter>() {
         override fun areItemsTheSame(oldItem: Counter, newItem: Counter): Boolean {
             return oldItem.id == newItem.id
@@ -49,35 +53,58 @@ class CounterAdapter(
         fun onBind(counter: Counter) {
             binding.apply {
                 title.text = counter.title
+
+                if (isSelected(counter)) {
+                    itemView.setBackgroundResource(R.drawable.selected_counter_background)
+                    selectedIcon.visibility = VISIBLE
+                    amountGroup.visibility = GONE
+                }else{
+                    amountGroup.visibility = VISIBLE
+                    selectedIcon.visibility = GONE
+                }
+
                 amountTextView.text = counter.count.toString()
-
                 decreaseView.backgroundTintList =
-                    if (counter.count == 0) ColorStateList.valueOf(ContextCompat.getColor(itemView.context, R.color.grayColor))
-                    else ColorStateList.valueOf(ContextCompat.getColor(itemView.context, R.color.orangeColor))
-
+                    if (counter.count == 0)
+                        ColorStateList.valueOf(
+                            ContextCompat.getColor(itemView.context, R.color.grayColor)
+                        )
+                    else ColorStateList.valueOf(
+                        ContextCompat.getColor(itemView.context, R.color.orangeColor)
+                    )
 
                 increaseView.setOnClickListener {
-                    callback.onDecreaseClicked(
-                        counter,
-                        adapterPosition
-                    )
+                    callback.onDecreaseClicked(counter, adapterPosition)
                 }
 
                 decreaseView.setOnClickListener {
-                    callback.onDecreaseClicked(
-                        counter,
-                        adapterPosition
-                    )
+                    callback.onDecreaseClicked(counter, adapterPosition)
                 }
 
-                root.setOnClickListener { callback.onDelete(counter, adapterPosition) }
+                root.setOnLongClickListener {
+                    callback.onSelectedItem(counter, adapterPosition)
+                    return@setOnLongClickListener true
+                }
             }
         }
     }
 
+    private fun isSelected(counter: Counter) =
+        selectedItems.contains(counter)
+
     fun update(counters: List<Counter>) {
         differ.submitList(counters)
         data = ArrayList(counters)
+    }
+
+    fun selectCounter(selectedCounter: Counter){
+        selectedItems.add(selectedCounter)
+        notifyDataSetChanged()
+    }
+
+    fun removeSelectedCounters(){
+        selectedItems.clear()
+        notifyDataSetChanged()
     }
 
     override fun getFilter(): Filter {
@@ -109,5 +136,5 @@ class CounterAdapter(
 interface CounterAdapterListeners {
     fun onPlusClicked(counter: Counter, position: Int)
     fun onDecreaseClicked(counter: Counter, position: Int)
-    fun onDelete(counter: Counter, position: Int)
+    fun onSelectedItem(counter: Counter, position: Int)
 }

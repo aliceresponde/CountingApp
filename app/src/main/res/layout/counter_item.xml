@@ -3,6 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:paddingTop="10dp"
+    android:layout_margin="5dp"
+    tools:background="@drawable/selected_counter_background"
     android:paddingBottom="10dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -16,6 +18,7 @@
         android:padding="5dp"
         android:textColor="@color/counterColor"
         android:textSize="17sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/decreaseView"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -41,7 +44,9 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:textSize="17sp"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/blackColor"
         app:layout_constraintBottom_toBottomOf="@+id/increaseView"
         app:layout_constraintEnd_toStartOf="@+id/increaseView"
         app:layout_constraintTop_toTopOf="@+id/increaseView"
@@ -63,11 +68,11 @@
         android:id="@+id/selectedIcon"
         android:layout_width="@dimen/icon_size"
         android:layout_height="@dimen/icon_size"
+        android:layout_marginEnd="16dp"
         android:padding="@dimen/icon_padding"
         android:src="@drawable/ic_selected"
         app:layout_constraintBottom_toBottomOf="@+id/title"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/title"
         app:layout_constraintTop_toTopOf="@+id/title" />
 
     <androidx.constraintlayout.widget.Group

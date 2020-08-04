@@ -1,5 +1,6 @@
 package com.aliceresponde.countingapp.di
 
+import com.aliceresponde.countingapp.domain.usecase.delete.DeleteCounterUseCase
 import com.aliceresponde.countingapp.domain.usecase.getcounters.GetCountersUseCase
 import com.aliceresponde.countingapp.presentation.main.MainViewModel
 import dagger.Module
@@ -14,12 +15,13 @@ object MainFragmentModule {
     @Provides
     fun provideMainViewModel(
         getCountersUC: GetCountersUseCase
-//        ,
+        ,
 //        increaseCounterUC: IncreaseCounterUseCase,
 //        decreaseCounterUC: DecreaseCounterUseCase,
-//        deleteCounterUC: DeleteCounterUseCase
+        deleteCounterUC: DeleteCounterUseCase
     ) = MainViewModel(
-        getCountersUC //, increaseCounterUC, decreaseCounterUC, deleteCounterUC
+        getCountersUC //, increaseCounterUC, decreaseCounterUC,
+        , deleteCounterUC
     )
 
 }

@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.aliceresponde.countingapp.domain.model.Counter
 import com.aliceresponde.countingapp.domain.model.ErrorViewState
 import com.aliceresponde.countingapp.domain.model.SuccessViewState
+import com.aliceresponde.countingapp.domain.usecase.delete.DeleteCounterUseCase
 import com.aliceresponde.countingapp.domain.usecase.getcounters.GetCountersUseCase
 import dagger.hilt.android.scopes.ActivityScoped
 import kotlinx.coroutines.Dispatchers.IO
@@ -19,10 +20,10 @@ import kotlinx.coroutines.withContext
 @ActivityScoped
 class MainViewModel @ViewModelInject constructor(
     private val getCountersUC: GetCountersUseCase
-//    ,
+    ,
 //    private val increaseCounterUC: IncreaseCounterUseCase,
 //    private val decreaseCounterUC: DecreaseCounterUseCase,
-//    private val deleteCounterUC: DeleteCounterUseCase
+    private val deleteCounterUC: DeleteCounterUseCase
 ) : ViewModel() {
 
     private val _loadingVisibility = MutableLiveData<Int>(GONE)
@@ -52,6 +53,10 @@ class MainViewModel @ViewModelInject constructor(
     private val _counters = MutableLiveData<List<Counter>>()
     val counters: LiveData<List<Counter>> get() = _counters
 
+    private val _selectedCounters = MutableLiveData<MutableList<Counter>>()
+    val selectedCounters: LiveData<MutableList<Counter>> get() = _selectedCounters
+
+
     fun getAllCounters() {
         viewModelScope.launch {
             withContext(IO) {
@@ -64,7 +69,8 @@ class MainViewModel @ViewModelInject constructor(
             }
         }
     }
-//
+
+    //
 //    fun increaseCounter(counter: Counter) {
 //        viewModelScope.launch {
 //            withContext(IO) {
@@ -91,18 +97,19 @@ class MainViewModel @ViewModelInject constructor(
 //        }
 //    }
 //
-//    fun delete(counter: Counter) {
-//        viewModelScope.launch {
-//            withContext(IO) {
-//                showLoading()
-//                val result = deleteCounterUC(counter.id)
-//                when (result) {
-//                    is SuccessState -> setupUiContent(result.data ?: listOf())
-//                    is ErrorState -> showInternetError()
-//                }
-//            }
-//        }
-//    }
+    fun deleteSelectedCounter() {
+        // todo check if can I delete just a counter
+        val counter = selectedCounters.value!!.last()
+        viewModelScope.launch {
+            withContext(IO) {
+                showLoading()
+                when (val result = deleteCounterUC(counter.id)) {
+                    is SuccessViewState -> setupUiContent(result.data ?: listOf())
+                    is ErrorViewState -> showInternetError()
+                }
+            }
+        }
+    }
 
     private fun setupUiContent(counters: List<Counter>) {
         if (counters.isEmpty()) showEmptyData()
@@ -174,5 +181,28 @@ class MainViewModel @ViewModelInject constructor(
         _counterListVisibility.postValue(GONE)
         _selectedItemBarVisibility.postValue(GONE)
         _searchBarVisibility.postValue(VISIBLE)
+    }
+
+    private fun showSelectedItemToolBoar() {
+        _loadingVisibility.postValue(GONE)
+        _swipeToRefreshVisibility.postValue(GONE)
+        _noDataVisibility.postValue(GONE)
+        _internetErrorVisibility.postValue(GONE)
+        _addCounterVisibility.postValue(GONE)
+        _searchBarVisibility.postValue(GONE)
+
+        _counterListVisibility.postValue(VISIBLE)
+        _selectedItemBarVisibility.postValue(VISIBLE)
+    }
+
+    fun addSelectedItem(counter: Counter) {
+        val current = _selectedCounters.value ?: mutableListOf()
+        current.add(counter)
+        showSelectedItemToolBoar()
+        _selectedCounters.postValue(current)
+    }
+
+    fun removeCurrentSelection() {
+        _selectedCounters.postValue(mutableListOf())
     }
 }

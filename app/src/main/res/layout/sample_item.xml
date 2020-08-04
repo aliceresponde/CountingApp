@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:background="@drawable/ic_solid_ellipse_background"
+        android:background="@drawable/selected_counter_background"
         android:gravity="center_vertical|center_horizontal"
         android:padding="5dp"
         app:layout_constraintStart_toStartOf="parent"

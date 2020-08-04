@@ -5,11 +5,13 @@
     <color name="colorAccent">#FF9500</color>
 
     <color name="orangeColor">#FF9500</color>
+    <color name="orangeSelected">#CEF6C280</color>
 
     <color name="blackColor">#000000</color>
     <color name="counterColor">#212121</color>
     <color name="counterColors">#4A4A4A</color>
     <color name="grayColor">#888B90</color>
+    <color name="lightGrayColor">#E2D3D5DA</color>
     <color name="whiteColor">#FFFFFF</color>
     <color name="mainBackground">#F8F5F5</color>
 </resources>

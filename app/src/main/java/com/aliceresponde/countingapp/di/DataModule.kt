@@ -77,10 +77,11 @@ object DataModule {
         localDataSource: LocalDataSource,
         remoteDataSource: RemoteDataSource
     ): CounterRepository = CounterRepositoryImp(localDataSource, remoteDataSource)
-//    ----------------------- UseCase-------------------------
-@Provides
-fun provideGetCountersUseCase(repository: CounterRepository): GetCountersUseCase =
-    GetCountersUseCaseImp(repository)
+
+    //    ----------------------- UseCase-------------------------
+    @Provides
+    fun provideGetCountersUseCase(repository: CounterRepository): GetCountersUseCase =
+        GetCountersUseCaseImp(repository)
 
     @Provides
     fun provideIncreaseCounterUseCase(repository: CounterRepository): IncreaseCounterUseCase =

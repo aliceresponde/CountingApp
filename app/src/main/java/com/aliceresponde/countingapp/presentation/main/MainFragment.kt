@@ -1,11 +1,11 @@
 package com.aliceresponde.countingapp.presentation.main
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.SearchView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -24,11 +24,6 @@ class MainFragment : Fragment(), CounterAdapterListeners {
     private val adapter: CounterAdapter by lazy { CounterAdapter(callback = this) }
     private lateinit var binding: FragmentMainBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(false)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -40,14 +35,52 @@ class MainFragment : Fragment(), CounterAdapterListeners {
             viewModel = this@MainFragment.viewModel
             lifecycleOwner = this@MainFragment
             countersList.adapter = adapter
-//            toolbarLayout.toolbar.inflateMenu(R.menu.menu_main)
+            searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    return false
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    adapter.filter.filter(newText)
+                    return false
+                }
+
+            })
             createCounterBtn.setOnClickListener { navigateToCreateCounterFragment() }
-//            swipeToRefresh.setOnRefreshListener { viewModel.getAllCounters() }
+            swipeToRefresh.setOnRefreshListener { this@MainFragment.viewModel.getAllCounters() }
+            cruzBtn.setOnClickListener { this@MainFragment.viewModel.removeCurrentSelection() }
+            deleteView.setOnClickListener { showDeleteCounterDialog() }
         }
 
         viewModel.counters.observe(viewLifecycleOwner, Observer { adapter.update(it) })
+        viewModel.selectedCounters.observe(viewLifecycleOwner, Observer {
+            adapter.selectCounter(it.last())
+        })
         viewModel.getAllCounters()
         return binding.root
+    }
+
+    private fun showDeleteCounterDialog() {
+        activity?.let {
+            val builder = AlertDialog.Builder(it)
+            val last = viewModel.selectedCounters.value!!.last()
+            builder.setMessage(
+                getString(
+                    R.string.delete_counter_title,
+                    last.title ?: "")
+            )
+                .setPositiveButton(getString(R.string.delete)) { dialog, id ->
+                    dialog.dismiss()
+                    viewModel.deleteSelectedCounter()
+                }
+                .setNegativeButton(getString(R.string.cancel)) { dialog, id -> dialog.dismiss() }
+            val dialog = builder.create()
+            dialog.setCancelable(false)
+            dialog.show()
+
+
+        }
+
     }
 
     override fun onPlusClicked(counter: Counter, position: Int) {
@@ -58,9 +91,10 @@ class MainFragment : Fragment(), CounterAdapterListeners {
 //        viewModel.decreaseCounter(counter, position)
     }
 
-    override fun onDelete(counter: Counter, position: Int) {
-//        viewModel.delete(counter)
+    override fun onSelectedItem(counter: Counter, position: Int) {
+        viewModel.addSelectedItem(counter)
     }
+
 
     private fun navigateToCreateCounterFragment() {
         val action = MainFragmentDirections.actionMainFragmentToCreateItemkFragment()

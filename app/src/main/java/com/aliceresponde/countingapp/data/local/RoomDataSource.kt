@@ -23,6 +23,7 @@ class RoomDataSource(private val db: AppDatabase) : LocalDataSource {
     }
 
     override suspend fun saveAllCounters(counters: List<CounterEntity>): DataState<List<CounterEntity>> {
+        dao.deleteAll()
         dao.insertAll(counters)
         val data = dao.getAllCounters()
         return SuccessState(data)
