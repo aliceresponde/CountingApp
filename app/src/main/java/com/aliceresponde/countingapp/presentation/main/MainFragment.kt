@@ -1,6 +1,7 @@
 package com.aliceresponde.countingapp.presentation.main
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +16,7 @@ import com.aliceresponde.countingapp.R
 import com.aliceresponde.countingapp.databinding.FragmentMainBinding
 import com.aliceresponde.countingapp.domain.model.Counter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.text.Typography.times
 
 
 @AndroidEntryPoint
@@ -52,15 +54,36 @@ class MainFragment : Fragment(), CounterAdapterListeners {
             }
             cruzBtn.setOnClickListener { this@MainFragment.viewModel.clearCurrentSelection() }
             deleteView.setOnClickListener { showDeleteCounterDialog() }
+            shareBtn.setOnClickListener {
+                shareCounter()
+                this@MainFragment.viewModel.clearCurrentSelection()
+            }
         }
 
-        viewModel.counters.observe(viewLifecycleOwner, Observer { adapter.update(it) })
+        viewModel.counters.observe(viewLifecycleOwner, Observer {
+            binding.countersLabel.text = getString(R.string.items, viewModel.countCounters())
+            binding.totalCounters.text = getString(R.string.times, viewModel.getCountersTimes())
+            adapter.update(it)
+        })
         viewModel.selectedCounters.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) adapter.selectCounter(it.last())
             else adapter.removeSelectedCounters()
         })
         viewModel.getAllCounters()
         return binding.root
+    }
+
+    private fun shareCounter() {
+        viewModel.selectedCounters.value?.let {
+            if (it.isNotEmpty()){
+                val shareIntent: Intent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_TEXT, it.last().toString())
+                    type = "text/plain"
+                }
+                startActivity(Intent.createChooser(shareIntent, resources.getText(R.string.share)))
+            }
+        }
     }
 
     private fun showDeleteCounterDialog() {
@@ -80,10 +103,7 @@ class MainFragment : Fragment(), CounterAdapterListeners {
             val dialog = builder.create()
             dialog.setCancelable(false)
             dialog.show()
-
-
         }
-
     }
 
     override fun onPlusClicked(counter: Counter, position: Int) {

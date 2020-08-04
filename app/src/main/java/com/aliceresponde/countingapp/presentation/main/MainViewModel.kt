@@ -197,8 +197,9 @@ class MainViewModel @ViewModelInject constructor(
     }
 
     fun addSelectedItem(counter: Counter) {
-        val current = _selectedCounters.value ?: mutableListOf()
-        current.add(counter)
+        val current = (_selectedCounters.value ?: mutableListOf())
+            .also { it.add(counter) }
+
         showSelectedItemToolBoar()
         _selectedCounters.postValue(current)
     }
@@ -209,5 +210,15 @@ class MainViewModel @ViewModelInject constructor(
         _searchBarVisibility.postValue(VISIBLE)
         _selectedItemBarVisibility.postValue(GONE)
         _selectedCounters.postValue(mutableListOf())
+    }
+
+    fun countCounters(): Int {
+        return  counters.value?.size ?: 0
+    }
+
+    fun getCountersTimes(): Int {
+        var times = 0
+        counters.value?.forEach { times += it.count  }
+        return times
     }
 }

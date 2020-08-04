@@ -18,6 +18,9 @@
     <string name="delete_counter_title">Delete \"%1$s\"?</string>
     <string name="delete">DELETE</string>
     <string name="cancel">CANCEL</string>
+    <string name="share">Share</string>
+    <string name="items">%1$d items</string>
+    <string name="times">%1$d times</string>
 
     <string-array name="drinks">
         <item>Cup of coffee</item>
