@@ -8,4 +8,9 @@
         <item name="fontFamily">@font/roboto</item>
     </style>
 
+    <style name="CustomAlertDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert">
+        <item name="android:colorAccent">@color/orangeColor</item>
+        <item name="android:windowBackground">@drawable/dialog_bg</item>
+    </style>
+
 </resources>

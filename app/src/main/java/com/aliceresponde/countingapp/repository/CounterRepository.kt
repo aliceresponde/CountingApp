@@ -7,5 +7,5 @@ interface CounterRepository {
     suspend fun getAllCounters(): DataState<List<CounterEntity>>
     suspend fun increaseCounter(id: String): DataState<List<CounterEntity>>
     suspend fun decreaseCounter(id: String): DataState<List<CounterEntity>>
-    suspend fun deleteCounter(id: String): DataState<List<CounterEntity>>
+    suspend fun deleteCounters(id: List<String>): DataState<List<CounterEntity>>
 }

@@ -10,17 +10,17 @@ import com.aliceresponde.countingapp.repository.ErrorState
 import com.aliceresponde.countingapp.repository.SuccessState
 
 class DeleteCounterUseCaseImp(private val repository: CounterRepository) : DeleteCounterUseCase {
-    override suspend fun invoke(id: String): UiState<List<Counter>> {
+    override suspend fun invoke(ids: List<String>): UiState<List<Counter>> {
         return try {
-            when (val result = repository.deleteCounter(id)) {
-                is SuccessState -> {
-                    val data = result.data ?: listOf()
-                    SuccessViewState(data.map { Counter(it.id, it.title, it.count) })
+                when (val result = repository.deleteCounters(ids)) {
+                    is SuccessState -> {
+                        val data = result.data ?: listOf()
+                        SuccessViewState(data.map { Counter(it.id, it.title, it.count) })
+                    }
+                    is ErrorState -> {
+                        ErrorViewState(result.message ?: "")
+                    }
                 }
-                is ErrorState -> {
-                    ErrorViewState(result.message ?: "")
-                }
-            }
         }catch (e: NoInternetException){
             ErrorViewState(e.message ?: "")
         }

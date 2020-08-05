@@ -75,11 +75,11 @@ class CounterAdapter(
                     )
 
                 increaseView.setOnClickListener {
-                    callback.onDecreaseClicked(counter, adapterPosition)
+                    callback.onIncreaseCounter(counter, adapterPosition)
                 }
 
                 decreaseView.setOnClickListener {
-                    callback.onDecreaseClicked(counter, adapterPosition)
+                    callback.onDecreaseCounterClicked(counter, adapterPosition)
                 }
 
                 root.setOnLongClickListener {
@@ -135,7 +135,7 @@ class CounterAdapter(
 }
 
 interface CounterAdapterListeners {
-    fun onPlusClicked(counter: Counter, position: Int)
-    fun onDecreaseClicked(counter: Counter, position: Int)
+    fun onIncreaseCounter(counter: Counter, position: Int)
+    fun onDecreaseCounterClicked(counter: Counter, position: Int)
     fun onSelectedItem(counter: Counter, position: Int)
 }

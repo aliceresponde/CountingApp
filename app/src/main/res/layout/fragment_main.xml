@@ -107,6 +107,7 @@
                 android:id="@+id/countersLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="75dp"
                 android:text="0 items"
                 android:textSize="17sp"
@@ -217,6 +218,7 @@
                     app:layout_constraintTop_toBottomOf="@id/connectionTitle" />
 
                 <TextView
+                    android:id="@+id/retry"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/retry"

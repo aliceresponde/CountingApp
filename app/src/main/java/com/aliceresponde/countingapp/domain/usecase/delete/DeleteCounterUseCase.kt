@@ -4,5 +4,5 @@ import com.aliceresponde.countingapp.domain.model.Counter
 import com.aliceresponde.countingapp.domain.model.UiState
 
 interface DeleteCounterUseCase {
-    suspend operator fun invoke(id:String): UiState<List<Counter>>
+    suspend operator fun invoke(id:List<String>): UiState<List<Counter>>
 }
