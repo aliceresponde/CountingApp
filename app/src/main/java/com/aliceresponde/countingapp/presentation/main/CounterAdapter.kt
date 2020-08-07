@@ -24,7 +24,6 @@ class CounterAdapter(
     private val callback: CounterAdapterListeners
 ) :
     RecyclerView.Adapter<CounterAdapter.CounterViewHolder>(), Filterable {
-    private var isAnySelected: Boolean = selectedItems.size > 0
     private val differCallback = object : DiffUtil.ItemCallback<Counter>() {
         override fun areItemsTheSame(oldItem: Counter, newItem: Counter): Boolean {
             return oldItem.id == newItem.id
@@ -123,6 +122,7 @@ class CounterAdapter(
                 }
                 val results = FilterResults()
                 results.values = filteredList
+                callback.onFiltered(filteredList)
                 return results
             }
 
@@ -138,4 +138,5 @@ interface CounterAdapterListeners {
     fun onIncreaseCounter(counter: Counter, position: Int)
     fun onDecreaseCounterClicked(counter: Counter, position: Int)
     fun onSelectedItem(counter: Counter, position: Int)
+    fun onFiltered(list: List<Counter>)
 }

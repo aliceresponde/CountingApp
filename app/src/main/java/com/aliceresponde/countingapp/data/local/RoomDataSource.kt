@@ -2,7 +2,6 @@ package com.aliceresponde.countingapp.data.local
 
 import com.aliceresponde.countingapp.data.dataSource.LocalDataSource
 import com.aliceresponde.countingapp.repository.DataState
-import com.aliceresponde.countingapp.repository.ErrorState
 import com.aliceresponde.countingapp.repository.SuccessState
 
 class RoomDataSource(private val db: AppDatabase) : LocalDataSource {
@@ -11,10 +10,9 @@ class RoomDataSource(private val db: AppDatabase) : LocalDataSource {
         id: String,
         title: String,
         count: Int
-    ): DataState<List<CounterEntity>> {
+    ): CounterEntity {
         dao.insert(CounterEntity(id, title, count))
-        val data = dao.getAllCounters()
-        return SuccessState(data)
+        return dao.getCounterBy(id)
     }
 
 
@@ -47,6 +45,12 @@ class RoomDataSource(private val db: AppDatabase) : LocalDataSource {
     override suspend fun deleteCounters(counterIdLis: List<String>): DataState<List<CounterEntity>> {
         counterIdLis.forEach { id -> deleteCounter(id) }
         return SuccessState(dao.getAllCounters())
+    }
+
+    override suspend fun deleteAllCounters(): DataState<List<CounterEntity>> {
+        dao.deleteAll()
+        val data = dao.getAllCounters()
+        return SuccessState(data)
     }
 
     private suspend fun deleteCounter(id: String): DataState<List<CounterEntity>> {

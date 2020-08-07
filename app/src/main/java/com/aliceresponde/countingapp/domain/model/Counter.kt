@@ -1,3 +1,7 @@
 package com.aliceresponde.countingapp.domain.model
 
-data class Counter(val id: String, val title: String, val count: Int, val isSelected: Boolean = false)
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
+data class Counter(val id: String, val title: String, val count: Int): Parcelable

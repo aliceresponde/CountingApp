@@ -10,7 +10,7 @@ import retrofit2.http.*
 
 interface CornerApiService {
     companion object {
-        private const val BASE_URL = "https://9a4a159ec639.ngrok.io/"
+        private const val BASE_URL = "https://1e746a3e152e.ngrok.io/"
             //"http://192.168.18.56:3000"
             //"http://10.0.2.2:3000/"   virtual device
 

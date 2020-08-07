@@ -3,7 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
+  <variable
+      name="viewModel"
+      type="com.aliceresponde.countingapp.presentation.createcounter.CreateCounterViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -36,43 +38,59 @@
             app:layout_constraintTop_toTopOf="@+id/cruz_btn" />
 
         <ImageView
-            android:id="@+id/action_btn"
+            android:id="@+id/saveBtn"
             android:layout_width="48dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="4dp"
             android:padding="7dp"
+            android:visibility="@{viewModel.saveVisibility}"
             android:scaleType="centerInside"
             android:src="@drawable/ic_label_save"
             app:layout_constraintBottom_toBottomOf="@+id/cruz_btn"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/cruz_btn" />
 
+        <ImageView
+            android:id="@+id/loading"
+            android:layout_width="48dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:padding="7dp"
+            android:visibility="@{viewModel.loadingVisibility}"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_tool_loading"
+            app:layout_constraintBottom_toBottomOf="@+id/cruz_btn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/cruz_btn" />
+
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/counterText"
+            android:id="@+id/counterTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
             android:hint="Name"
-            app:layout_constraintEnd_toStartOf="@+id/action_btn"
+            app:layout_constraintEnd_toStartOf="@+id/saveBtn"
             app:layout_constraintStart_toStartOf="@id/cruz_btn"
             app:layout_constraintTop_toBottomOf="@+id/cruz_btn">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/counterTitleEdit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
+            android:id="@+id/seeSamples"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:text="@string/create_counter_sample_message"
             android:textColor="@color/grayColor"
             android:textSize="15sp"
-            app:layout_constraintEnd_toStartOf="@id/action_btn"
+            app:layout_constraintEnd_toStartOf="@id/saveBtn"
             app:layout_constraintStart_toStartOf="@id/cruz_btn"
-            app:layout_constraintTop_toBottomOf="@id/counterText" />
+            app:layout_constraintTop_toBottomOf="@id/counterTitle" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

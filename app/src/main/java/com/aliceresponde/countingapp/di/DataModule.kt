@@ -12,6 +12,8 @@ import com.aliceresponde.countingapp.data.remote.CornerApiService
 import com.aliceresponde.countingapp.data.remote.NetworkConnection
 import com.aliceresponde.countingapp.data.remote.NetworkConnectionInterceptor
 import com.aliceresponde.countingapp.data.remote.RetrofitDataSource
+import com.aliceresponde.countingapp.domain.usecase.create.CreateCounterUseCase
+import com.aliceresponde.countingapp.domain.usecase.create.CreateCounterUseCaseImp
 import com.aliceresponde.countingapp.domain.usecase.decrease.DecreaseCounterUseCase
 import com.aliceresponde.countingapp.domain.usecase.decrease.DecreaseCounterUseCaseImp
 import com.aliceresponde.countingapp.domain.usecase.delete.DeleteCounterUseCase
@@ -94,5 +96,8 @@ object DataModule {
     @Provides
     fun provideDeleteCounterUseCase(repository: CounterRepository): DeleteCounterUseCase =
         DeleteCounterUseCaseImp(repository)
+
+    @Provides
+    fun provideCreateCounterUseCase(repository: CounterRepository): CreateCounterUseCase = CreateCounterUseCaseImp(repository)
 
 }

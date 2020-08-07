@@ -28,8 +28,17 @@ class CounterRepositoryImp(
         }
     }
 
-    override suspend fun createCounter(tile: String): DataState<List<CounterEntity>> {
-        return SuccessState(listOf())
+    override suspend fun createCounter(tile: String): DataState<CounterEntity> {
+        return when (val remote = remoteDataSource.createCounter(tile)) {
+            is SuccessState -> {
+                val data = remote.data ?: listOf()
+                val newRemoteCounter = data.last()
+                val createdCounter =
+                    localDataSource.createCounter(newRemoteCounter.id, newRemoteCounter.title)
+                SuccessState(createdCounter)
+            }
+            is ErrorState -> ErrorState(remote.message ?: "")
+        }
     }
 
     override suspend fun increaseCounter(id: String): DataState<List<CounterEntity>> {
@@ -46,7 +55,15 @@ class CounterRepositoryImp(
     }
 
     override suspend fun decreaseCounter(id: String): DataState<List<CounterEntity>> {
-        return SuccessState(listOf())
+        return when (val remote = remoteDataSource.decreaseCounter(id)) {
+            is SuccessState -> {
+                val data = remote.data ?: listOf()
+                localDataSource.saveAllCounters(data.map {
+                    CounterEntity(it.id, it.title, it.count)
+                })
+            }
+            is ErrorState -> ErrorState(remote.message ?: "")
+        }
     }
 
     override suspend fun deleteCounters(ids: List<String>): DataState<List<CounterEntity>> {

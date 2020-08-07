@@ -21,15 +21,15 @@
         tools:layout="@layout/fragment_main" >
         <action
             android:id="@+id/action_mainFragment_to_createItemkFragment"
-            app:destination="@id/createItemkFragment" />
+            app:destination="@id/createCounterFragment" />
     </fragment>
     <fragment
-        android:id="@+id/createItemkFragment"
-        android:name="com.aliceresponde.countingapp.presentation.createcounter.CreateItemkFragment"
+        android:id="@+id/createCounterFragment"
+        android:name="com.aliceresponde.countingapp.presentation.createcounter.CreateCounterFragment"
         android:label="fragment_create_itemk"
-        tools:layout="@layout/fragment_create_itemk" >
+        tools:layout="@layout/fragment_create_counter" >
         <action
-            android:id="@+id/action_createItemkFragment_to_counterSampleFragment"
+            android:id="@+id/action_createCounterFragment_to_counterSampleFragment"
             app:destination="@id/counterSampleFragment" />
     </fragment>
     <fragment

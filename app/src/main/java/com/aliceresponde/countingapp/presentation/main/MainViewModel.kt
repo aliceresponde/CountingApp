@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.aliceresponde.countingapp.domain.model.Counter
 import com.aliceresponde.countingapp.domain.model.ErrorViewState
 import com.aliceresponde.countingapp.domain.model.SuccessViewState
+import com.aliceresponde.countingapp.domain.usecase.decrease.DecreaseCounterUseCase
 import com.aliceresponde.countingapp.domain.usecase.delete.DeleteCounterUseCase
 import com.aliceresponde.countingapp.domain.usecase.getcounters.GetCountersUseCase
 import com.aliceresponde.countingapp.domain.usecase.increase.IncreaseCounterUseCase
@@ -22,8 +23,7 @@ import kotlinx.coroutines.withContext
 class MainViewModel @ViewModelInject constructor(
     private val getCountersUC: GetCountersUseCase,
     private val increaseCounterUC: IncreaseCounterUseCase,
-
-//    private val decreaseCounterUC: DecreaseCounterUseCase,
+    private val decreaseCounterUC: DecreaseCounterUseCase,
     private val deleteCounterUC: DeleteCounterUseCase
 ) : ViewModel() {
 
@@ -35,9 +35,6 @@ class MainViewModel @ViewModelInject constructor(
 
     private val _selectedItemBarVisibility = MutableLiveData<Int>(GONE)
     val selectedItemBarVisibility: LiveData<Int> get() = _selectedItemBarVisibility
-
-    private val _swipeToRefreshVisibility = MutableLiveData<Int>(GONE)
-    val swipeToRefreshVisibility: LiveData<Int> get() = _swipeToRefreshVisibility
 
     private val _noDataVisibility = MutableLiveData<Int>(GONE)
     val noDataVisibility: LiveData<Int> get() = _noDataVisibility
@@ -51,8 +48,12 @@ class MainViewModel @ViewModelInject constructor(
     private val _counterListVisibility = MutableLiveData<Int>(GONE)
     val counterListVisibility: LiveData<Int> get() = _counterListVisibility
 
-    private val _counters = MutableLiveData<List<Counter>>()
-    val counters: LiveData<List<Counter>> get() = _counters
+    private val _isFilteredResultEmptyVisibility = MutableLiveData<Int>()
+    val isFilteredResultEmptyVisibility: LiveData<Int> get() = _isFilteredResultEmptyVisibility
+
+
+    private val _counters = MutableLiveData<MutableList<Counter>>()
+    val counters: LiveData<MutableList<Counter>> get() = _counters
 
     private val _selectedCounters = MutableLiveData<MutableList<Counter>>()
     val selectedCounters: LiveData<MutableList<Counter>> get() = _selectedCounters
@@ -90,8 +91,7 @@ class MainViewModel @ViewModelInject constructor(
             viewModelScope.launch {
                 withContext(IO) {
                     showLoading()
-                    val result = increaseCounterUC(counter.id)
-                    when (result) {
+                    when (val result = increaseCounterUC(counter.id)) {
                         is SuccessViewState -> setupUiContent(result.data ?: listOf())
                         is ErrorViewState -> showInternetError()
                     }
@@ -100,20 +100,22 @@ class MainViewModel @ViewModelInject constructor(
         }
     }
 
-    //
-//    fun decreaseCounter(counter: Counter, position: Int) {
-//        viewModelScope.launch {
-//            withContext(IO) {
-//                showLoading()
-//                val result = decreaseCounterUC(counter.id)
-//                when (result) {
-//                    is SuccessState -> setupUiContent(result.data ?: listOf())
-//                    is ErrorState -> showInternetError()
-//                }
-//            }
-//        }
-//    }
-//
+    fun decreaseCounter(counter: Counter, isInternetAccess: Boolean) {
+        if (!isInternetAccess) _decreaseCounterInternetError.postValue(counter)
+        else if (counter.count == 0) return
+        else {
+            viewModelScope.launch {
+                withContext(IO) {
+                    showLoading()
+                    when (val result = decreaseCounterUC(counter.id)) {
+                        is SuccessViewState -> setupUiContent(result.data ?: listOf())
+                        is ErrorViewState -> showInternetError()
+                    }
+                }
+            }
+        }
+    }
+
     fun deleteSelectedCounter(isInternetAccess: Boolean) {
         if (!isInternetAccess) _deleteInternetError.postValue(true)
         else {
@@ -123,16 +125,15 @@ class MainViewModel @ViewModelInject constructor(
                 withContext(IO) {
                     showLoading()
                     when (val result = deleteCounterUC(counterIss)) {
-                        is SuccessViewState ->  {
-                        val data: List<Counter> = result.data ?: listOf()
-                        setupUiContent(data)
-                    }
+                        is SuccessViewState -> {
+                            val data: List<Counter> = result.data ?: listOf()
+                            setupUiContent(data)
+                        }
                         is ErrorViewState -> showInternetError()
                     }
                 }
             }
             _selectedCounters.value?.clear()
-
         }
     }
 
@@ -141,31 +142,43 @@ class MainViewModel @ViewModelInject constructor(
         else showData(counters)
     }
 
-    private fun hideAll() {
-        _loadingVisibility.postValue(GONE)
-        _swipeToRefreshVisibility.postValue(GONE)
-        _noDataVisibility.postValue(GONE)
-        _internetErrorVisibility.postValue(GONE)
-        _addCounterVisibility.postValue(GONE)
-        _counterListVisibility.postValue(GONE)
-        _selectedItemBarVisibility.postValue(GONE)
-        _searchBarVisibility.postValue(VISIBLE)
+    fun addSelectedCounter(counter: Counter) {
+        val current = (_selectedCounters.value ?: mutableListOf()).also { it.add(counter) }
+        showSelectedItemToolBoar()
+        _selectedCounters.postValue(current)
     }
 
-    private fun showSwipeToDismiss() {
+    fun addNewCounter(counter: Counter) {
+        val current = (_counters.value ?: mutableListOf()).also { it.add(counter) }
+        _counters.postValue(current)
+    }
+
+    fun countCounters(): Int = counters.value?.size ?: 0
+
+    fun getCountersTimes(): Int {
+        var times = 0
+        counters.value?.forEach { times += it.count }
+        return times
+    }
+
+    fun onFilterResult(list: List<Counter>) {
+        if (list.isEmpty()) showEmptyFilteredResult()
+    }
+
+    private fun showEmptyFilteredResult() {
+        _isFilteredResultEmptyVisibility.postValue(VISIBLE)
+        _searchBarVisibility.postValue(VISIBLE)
+        _addCounterVisibility.postValue(VISIBLE)
         _loadingVisibility.postValue(GONE)
         _noDataVisibility.postValue(GONE)
-        _swipeToRefreshVisibility.postValue(VISIBLE)
         _internetErrorVisibility.postValue(GONE)
-        _addCounterVisibility.postValue(VISIBLE)
-        _counterListVisibility.postValue(VISIBLE)
+        _counterListVisibility.postValue(GONE)
         _selectedItemBarVisibility.postValue(GONE)
-        _searchBarVisibility.postValue(VISIBLE)
     }
 
     private fun showInternetError() {
+        _isFilteredResultEmptyVisibility.postValue(GONE)
         _loadingVisibility.postValue(GONE)
-        _swipeToRefreshVisibility.postValue(GONE)
         _noDataVisibility.postValue(GONE)
         _internetErrorVisibility.postValue(VISIBLE)
         _addCounterVisibility.postValue(VISIBLE)
@@ -175,11 +188,11 @@ class MainViewModel @ViewModelInject constructor(
     }
 
     private fun showData(counters: List<Counter>) {
-        _counters.postValue(counters)
+        _counters.postValue(counters.toMutableList())
+        _isFilteredResultEmptyVisibility.postValue(GONE)
         _addCounterVisibility.postValue(VISIBLE)
         _counterListVisibility.postValue(VISIBLE)
         _loadingVisibility.postValue(GONE)
-        _swipeToRefreshVisibility.postValue(GONE)
         _noDataVisibility.postValue(GONE)
         _internetErrorVisibility.postValue(GONE)
         _selectedItemBarVisibility.postValue(GONE)
@@ -187,10 +200,10 @@ class MainViewModel @ViewModelInject constructor(
     }
 
     private fun showEmptyData() {
+        _isFilteredResultEmptyVisibility.postValue(GONE)
         _noDataVisibility.postValue(VISIBLE)
         _addCounterVisibility.postValue(VISIBLE)
         _loadingVisibility.postValue(GONE)
-        _swipeToRefreshVisibility.postValue(GONE)
         _internetErrorVisibility.postValue(GONE)
         _counterListVisibility.postValue(GONE)
         _selectedItemBarVisibility.postValue(GONE)
@@ -198,8 +211,8 @@ class MainViewModel @ViewModelInject constructor(
     }
 
     private fun showLoading() {
+        _isFilteredResultEmptyVisibility.postValue(GONE)
         _loadingVisibility.postValue(VISIBLE)
-        _swipeToRefreshVisibility.postValue(GONE)
         _noDataVisibility.postValue(GONE)
         _internetErrorVisibility.postValue(GONE)
         _addCounterVisibility.postValue(VISIBLE)
@@ -209,8 +222,8 @@ class MainViewModel @ViewModelInject constructor(
     }
 
     private fun showSelectedItemToolBoar() {
+        _isFilteredResultEmptyVisibility.postValue(GONE)
         _loadingVisibility.postValue(GONE)
-        _swipeToRefreshVisibility.postValue(GONE)
         _noDataVisibility.postValue(GONE)
         _internetErrorVisibility.postValue(GONE)
         _addCounterVisibility.postValue(GONE)
@@ -220,29 +233,12 @@ class MainViewModel @ViewModelInject constructor(
         _selectedItemBarVisibility.postValue(VISIBLE)
     }
 
-    fun addSelectedItem(counter: Counter) {
-        val current = (_selectedCounters.value ?: mutableListOf())
-            .also { it.add(counter) }
-
-        showSelectedItemToolBoar()
-        _selectedCounters.postValue(current)
-    }
-
     fun clearCurrentSelection() {
+        _isFilteredResultEmptyVisibility.postValue(GONE)
         _counterListVisibility.postValue(VISIBLE)
         _addCounterVisibility.postValue(VISIBLE)
         _searchBarVisibility.postValue(VISIBLE)
         _selectedItemBarVisibility.postValue(GONE)
         _selectedCounters.postValue(mutableListOf())
-    }
-
-    fun countCounters(): Int {
-        return counters.value?.size ?: 0
-    }
-
-    fun getCountersTimes(): Int {
-        var times = 0
-        counters.value?.forEach { times += it.count }
-        return times
     }
 }

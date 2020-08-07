@@ -1,5 +1,6 @@
 package com.aliceresponde.countingapp.di
 
+import com.aliceresponde.countingapp.domain.usecase.decrease.DecreaseCounterUseCase
 import com.aliceresponde.countingapp.domain.usecase.delete.DeleteCounterUseCase
 import com.aliceresponde.countingapp.domain.usecase.getcounters.GetCountersUseCase
 import com.aliceresponde.countingapp.domain.usecase.increase.IncreaseCounterUseCase
@@ -15,16 +16,10 @@ object MainFragmentModule {
 
     @Provides
     fun provideMainViewModel(
-        getCountersUC: GetCountersUseCase
-        ,
+        getCountersUC: GetCountersUseCase,
         increaseCounterUC: IncreaseCounterUseCase,
-//        decreaseCounterUC: DecreaseCounterUseCase,
+        decreaseCounterUC: DecreaseCounterUseCase,
         deleteCounterUC: DeleteCounterUseCase
-    ) = MainViewModel(
-        getCountersUC,
-        increaseCounterUC,
-        // decreaseCounterUC,
-         deleteCounterUC
-    )
+    ) = MainViewModel(getCountersUC, increaseCounterUC, decreaseCounterUC, deleteCounterUC)
 
 }

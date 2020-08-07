@@ -40,6 +40,7 @@
                 tools:visibility="visible"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="@{viewModel.selectedItemBarVisibility}"
@@ -94,12 +95,12 @@
 
                 <View
                     android:id="@+id/line"
-                    android:background="@color/lightGrayColor"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/shareBtn"
                     android:layout_width="0dp"
-                    android:layout_height="1dp"/>
+                    android:layout_height="1dp"
+                    android:background="@color/lightGrayColor"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/shareBtn" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -146,10 +147,12 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/countersLabel"
                 tools:itemCount="23"
+                tools:visibility="gone"
                 tools:listitem="@layout/counter_item" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/noDataContainer"
+                tools:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="@{viewModel.noDataVisibility}"
@@ -187,6 +190,7 @@
                 android:id="@+id/connectionErrorContainer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                tools:visibility="gone"
                 android:visibility="@{viewModel.internetErrorVisibility}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -256,6 +260,18 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.504"
                 app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/filteredEmptyData"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:text="@string/no_results"
+                android:textSize="22sp"
+                android:visibility="@{viewModel.isFilteredResultEmptyVisibility}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

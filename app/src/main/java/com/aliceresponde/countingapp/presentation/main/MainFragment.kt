@@ -67,9 +67,18 @@ class MainFragment : Fragment(), CounterAdapterListeners {
                 shareCounter()
                 this@MainFragment.viewModel.clearCurrentSelection()
             }
-
         }
 
+        setupObservers()
+
+        viewModel.getAllCounters(networkConnection.isConnected())
+        return binding.root
+    }
+
+    private fun setupObservers() {
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Counter>("key")?.observe(viewLifecycleOwner, Observer {
+            newCounter -> viewModel.addNewCounter(newCounter)
+        })
         viewModel.counters.observe(viewLifecycleOwner, Observer {
             binding.countersLabel.text = getString(R.string.items, viewModel.countCounters())
             binding.totalCounters.text = getString(R.string.times, viewModel.getCountersTimes())
@@ -89,8 +98,9 @@ class MainFragment : Fragment(), CounterAdapterListeners {
             showIncreaseCounterErrorDialog(it)
         })
 
-        viewModel.getAllCounters(networkConnection.isConnected())
-        return binding.root
+        viewModel.decreaseCounterInternetError.observe(viewLifecycleOwner, Observer {
+            showDecreaseCounterErrorDialog(it)
+        })
     }
 
 
@@ -112,17 +122,40 @@ class MainFragment : Fragment(), CounterAdapterListeners {
             val builder = AlertDialog.Builder(it, R.style.CustomAlertDialog)
             builder.setTitle(
                 getString(
-                    R.string.dialog_add_counter_error,
+                    R.string.dialog_modify_counter_error,
                     counter.title,
                     counter.count + 1
-                ))
+                )
+            )
                 .setMessage(R.string.dialog_delete_counter_error_message)
                 .setPositiveButton(getString(R.string.dismis)) { dialog, _ -> dialog.dismiss() }
-                    .setNegativeButton(getString(R.string.retry)) { dialog, _ ->
-                        dialog.dismiss()
-                        viewModel.increaseCounter(counter, networkConnection.isConnected())
-                    }
-                    val dialog = builder . create ()
+                .setNegativeButton(getString(R.string.retry)) { dialog, _ ->
+                    dialog.dismiss()
+                    viewModel.increaseCounter(counter, networkConnection.isConnected())
+                }
+            val dialog = builder.create()
+            dialog.setCancelable(false)
+            dialog.show()
+        }
+    }
+
+    private fun showDecreaseCounterErrorDialog(counter: Counter) {
+        activity?.let {
+            val builder = AlertDialog.Builder(it, R.style.CustomAlertDialog)
+            builder.setTitle(
+                getString(
+                    R.string.dialog_modify_counter_error,
+                    counter.title,
+                    counter.count - 1
+                )
+            )
+                .setMessage(R.string.dialog_delete_counter_error_message)
+                .setPositiveButton(getString(R.string.dismis)) { dialog, _ -> dialog.dismiss() }
+                .setNegativeButton(getString(R.string.retry)) { dialog, _ ->
+                    dialog.dismiss()
+                    viewModel.decreaseCounter(counter, networkConnection.isConnected())
+                }
+            val dialog = builder.create()
             dialog.setCancelable(false)
             dialog.show()
         }
@@ -148,12 +181,7 @@ class MainFragment : Fragment(), CounterAdapterListeners {
         activity?.let {
             val builder = AlertDialog.Builder(it, R.style.CustomAlertDialog)
             val last = viewModel.selectedCounters.value!!.last()
-            builder.setMessage(
-                getString(
-                    R.string.delete_counter_title,
-                    last.title ?: ""
-                )
-            )
+            builder.setMessage(getString(R.string.delete_counter_title, last.title ?: ""))
                 .setPositiveButton(getString(R.string.delete)) { dialog, id ->
                     dialog.dismiss()
                     viewModel.deleteSelectedCounter(networkConnection.isConnected())
@@ -170,13 +198,16 @@ class MainFragment : Fragment(), CounterAdapterListeners {
     }
 
     override fun onDecreaseCounterClicked(counter: Counter, position: Int) {
-//        viewModel.de(counter, position)
+        viewModel.decreaseCounter(counter, networkConnection.isConnected())
     }
 
     override fun onSelectedItem(counter: Counter, position: Int) {
-        viewModel.addSelectedItem(counter)
+        viewModel.addSelectedCounter(counter)
     }
 
+    override fun onFiltered(list: List<Counter>) {
+        viewModel.onFilterResult(list)
+    }
 
     private fun navigateToCreateCounterFragment() {
         val action = MainFragmentDirections.actionMainFragmentToCreateItemkFragment()
