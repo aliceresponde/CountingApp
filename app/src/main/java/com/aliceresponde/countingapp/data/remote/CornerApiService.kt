@@ -1,8 +1,8 @@
 package com.aliceresponde.countingapp.data.remote
 
+import com.aliceresponde.countingapp.BuildConfig.BASE_URL
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.internal.http.hasBody
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -10,10 +10,6 @@ import retrofit2.http.*
 
 interface CornerApiService {
     companion object {
-        private const val BASE_URL = "https://1e746a3e152e.ngrok.io/"
-            //"http://192.168.18.56:3000"
-            //"http://10.0.2.2:3000/"   virtual device
-
         operator fun invoke(interceptor: Interceptor): CornerApiService {
             val logInterceptor = HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
@@ -49,7 +45,7 @@ interface CornerApiService {
     @POST("api/v1/counter/dec")
     suspend fun decrementCounter(@Body request: ModifyCounterBody): List<CounterResponse>
 
-//    @Headers("Content-Type: application/json")
+    //    @Headers("Content-Type: application/json")
 //    @DELETE("api/v1/counter")
     @HTTP(method = "DELETE", path = "api/v1/counter", hasBody = true)
     suspend fun deleteCounter(@Body request: ModifyCounterBody): List<CounterResponse>
