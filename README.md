@@ -1,5 +1,5 @@
 # CountingApp
-Here you have an android app written on kotlin
+Here you have an android app written on kotlin that count things called counters.
 
 # How To use it?
 You can use Android Studio or Intellij to work with this repository.
