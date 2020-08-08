@@ -1,7 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="16dp"
     tools:context=".presentation.countersample.CounterSampleFragment">
-</FrameLayout>
+
+    <ImageView
+        android:id="@+id/cruzView"
+        android:layout_width="32sp"
+        android:layout_height="32dp"
+        android:src="@drawable/ic_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/samplesTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:text="@string/examples"
+        android:textColor="@color/blackColor"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/cruzView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/cruzView"
+        app:layout_constraintTop_toTopOf="@+id/cruzView"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/samplesSubTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="@string/samples_subtitle"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="@+id/cruzView"
+        app:layout_constraintTop_toBottomOf="@+id/cruzView" />
+
+    <TextView
+        android:id="@+id/drinksTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/title_drinks"
+        android:textColor="@color/blackColor"
+        android:textSize="17sp"
+        app:layout_constraintStart_toStartOf="@id/cruzView"
+        app:layout_constraintTop_toBottomOf="@id/samplesSubTitle" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/drinksRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:orientation="horizontal"
+        tools:listitem="@layout/sample_item"
+        tools:itemCount="10"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintStart_toStartOf="@id/drinksTitle"
+        app:layout_constraintTop_toBottomOf="@id/drinksTitle" />
+
+
+    <TextView
+        android:id="@+id/foodTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/food_title"
+        android:textColor="@color/blackColor"
+        android:textSize="17sp"
+        app:layout_constraintStart_toStartOf="@id/cruzView"
+        app:layout_constraintTop_toBottomOf="@id/drinksRecycler" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/foodRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        tools:listitem="@layout/sample_item"
+        tools:itemCount="10"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintStart_toStartOf="@id/drinksTitle"
+        app:layout_constraintTop_toBottomOf="@id/foodTitle" />
+
+
+    <TextView
+        android:id="@+id/miscTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/misc_title"
+        android:textColor="@color/blackColor"
+        android:textSize="17sp"
+        app:layout_constraintStart_toStartOf="@id/cruzView"
+        app:layout_constraintTop_toBottomOf="@id/foodRecycler" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/miscRecycler"
+        tools:listitem="@layout/sample_item"
+        tools:itemCount="10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintStart_toStartOf="@id/drinksTitle"
+        app:layout_constraintTop_toBottomOf="@id/miscTitle" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

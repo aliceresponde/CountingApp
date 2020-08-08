@@ -28,6 +28,11 @@
     <string name="dismiss">DISMISS</string>
     <string name="no_results">No results</string>
     <string name="dialog_create_counter_error_title">Couldn\'t create the counter</string>
+    <string name="examples">Examples</string>
+    <string name="samples_subtitle">Select an example to add it to your counters.</string>
+    <string name="title_drinks">Drinks</string>
+    <string name="food_title">food</string>
+    <string name="misc_title">Misc</string>
 
     <string-array name="drinks">
         <item>Cup of coffee</item>
