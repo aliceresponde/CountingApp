@@ -190,7 +190,7 @@
                 android:id="@+id/connectionErrorContainer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:visibility="gone"
+                tools:visibility="visible"
                 android:visibility="@{viewModel.internetErrorVisibility}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -225,6 +225,7 @@
                     android:id="@+id/retry"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:padding="10dp"
                     android:text="@string/retry"
                     android:textColor="@color/orangeColor"
                     android:textSize="17sp"
@@ -263,8 +264,8 @@
 
             <TextView
                 android:id="@+id/filteredEmptyData"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="@string/no_results"
                 android:textSize="22sp"
                 android:visibility="@{viewModel.isFilteredResultEmptyVisibility}"

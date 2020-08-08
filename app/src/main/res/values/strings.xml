@@ -25,8 +25,9 @@
     <string name="dialog_delete_counter_error_message">The internet connection appears to \n be offline.</string>
     <string name="ok">OK</string>
     <string name="dialog_modify_counter_error">Couldn\'t update %1$s counter to %2$d</string>
-    <string name="dismis">DISMIS</string>
+    <string name="dismiss">DISMISS</string>
     <string name="no_results">No results</string>
+    <string name="dialog_create_counter_error_title">Couldn\'t create the counter</string>
 
     <string-array name="drinks">
         <item>Cup of coffee</item>

@@ -27,42 +27,42 @@
 
     <ImageView
         android:id="@+id/decreaseView"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:cropToPadding="true"
+        android:padding="0dp"
+        android:scaleType="centerInside"
         android:layout_marginEnd="16dp"
-        android:background="@drawable/ic_minus"
+        android:src="@drawable/ic_minus"
         android:contentDescription="@string/decrease_icon"
-        app:layout_constraintBottom_toBottomOf="@+id/increaseView"
+        app:layout_constraintBottom_toBottomOf="@+id/amountTextView"
         app:layout_constraintEnd_toStartOf="@+id/amountTextView"
-        app:layout_constraintTop_toTopOf="@+id/increaseView"
-        app:layout_constraintVertical_bias="0.44" />
+        app:layout_constraintTop_toTopOf="@+id/amountTextView" />
 
     <TextView
         android:id="@+id/amountTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
+        android:textColor="@color/blackColor"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:textColor="@color/blackColor"
-        app:layout_constraintBottom_toBottomOf="@+id/increaseView"
         app:layout_constraintEnd_toStartOf="@+id/increaseView"
-        app:layout_constraintTop_toTopOf="@+id/increaseView"
+        app:layout_constraintTop_toTopOf="@+id/title"
         tools:text="200" />
 
     <ImageView
         android:id="@+id/increaseView"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:padding="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:layout_marginEnd="13dp"
-        android:background="@drawable/ic_plus"
+        android:src="@drawable/ic_plus"
         android:contentDescription="@string/increase_icon"
-        android:scaleType="centerInside"
+        android:scaleType="center"
+        app:layout_constraintBottom_toBottomOf="@+id/amountTextView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/title" />
+        app:layout_constraintTop_toTopOf="@+id/amountTextView" />
 
     <ImageView
         tools:visibility="gone"

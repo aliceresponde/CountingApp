@@ -12,7 +12,6 @@ import com.aliceresponde.countingapp.domain.usecase.create.CreateCounterUseCase
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.lang.Exception
 
 class CreateCounterViewModel @ViewModelInject constructor(private val createCounterUC: CreateCounterUseCase) :
     ViewModel() {
@@ -32,30 +31,34 @@ class CreateCounterViewModel @ViewModelInject constructor(private val createCoun
 
     fun createCounter(title: String, isInternetAccess: Boolean) {
         if (!isInternetAccess) _showInternetError.value = true
-        try {
-            showLoading()
-            viewModelScope.launch {
-                withContext(IO) {
-                    val result = createCounterUC(title)
-                    val data = result.data!!
-                    _newCounter.postValue(data)
+        else {
+            try {
+                viewModelScope.launch {
+                    withContext(IO) {
+                        showLoading()
+                        val result = createCounterUC(title)
+                        val data = result.data
+                        data?.let {
+                            _newCounter.postValue(data)
+                        }
+                        hideLoading()
+                    }
                 }
+            } catch (e: Exception) {
+                _saveVisibility.value = VISIBLE
+                _loadingVisibility.value = GONE
             }
-            hideLoading()
-        }catch (e: Exception){
-            _showInternetError.value = true
-            hideLoading()
         }
     }
 
-    private fun showLoading(){
-        _saveVisibility.value = GONE
-        _loadingVisibility.value = VISIBLE
+    private fun showLoading() {
+        _saveVisibility.postValue(GONE)
+        _loadingVisibility.postValue(VISIBLE)
     }
 
-    private fun hideLoading(){
-        _saveVisibility.value = VISIBLE
-        _loadingVisibility.value = GONE
+    private fun hideLoading() {
+        _saveVisibility.postValue(VISIBLE)
+        _loadingVisibility.postValue(GONE)
     }
 
 }

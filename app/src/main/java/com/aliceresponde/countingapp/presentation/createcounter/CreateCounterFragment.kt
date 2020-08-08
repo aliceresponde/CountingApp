@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -40,6 +41,11 @@ class CreateCounterFragment : Fragment() {
             seeSamples.setOnClickListener {
             }
 
+            cruzBtn.setOnClickListener {
+                counterTitleEdit.text?.clear()
+                hideKeyboard()
+            }
+
             saveBtn.setOnClickListener {
                 hideKeyboard()
                 val title = counterTitleEdit.text.toString()
@@ -51,7 +57,27 @@ class CreateCounterFragment : Fragment() {
             navigateToMainScreen(it)
         })
 
+        viewModel.showInternetError.observe(viewLifecycleOwner, Observer {
+            showNoInternetDialog()
+        })
+
         return binding.root
+    }
+
+    private fun showNoInternetDialog() {
+        activity?.let {
+            val builder = AlertDialog.Builder(it)
+            builder.setTitle(getString(R.string.dialog_create_counter_error_title))
+            builder.setMessage(
+                getString(
+                    R.string.dialog_delete_counter_error_message
+                )
+            )
+                .setPositiveButton(getString(R.string.ok)) { dialog, _ -> dialog.dismiss() }
+            val dialog = builder.create()
+            dialog.setCancelable(false)
+            dialog.show()
+        }
     }
 
     private fun navigateToMainScreen(newCounter: Counter) {

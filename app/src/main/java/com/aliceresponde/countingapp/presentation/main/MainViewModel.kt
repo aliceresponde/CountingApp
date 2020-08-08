@@ -51,7 +51,6 @@ class MainViewModel @ViewModelInject constructor(
     private val _isFilteredResultEmptyVisibility = MutableLiveData<Int>()
     val isFilteredResultEmptyVisibility: LiveData<Int> get() = _isFilteredResultEmptyVisibility
 
-
     private val _counters = MutableLiveData<MutableList<Counter>>()
     val counters: LiveData<MutableList<Counter>> get() = _counters
 
@@ -66,7 +65,6 @@ class MainViewModel @ViewModelInject constructor(
 
     private val _decreaseCounterInternetError = MutableLiveData<Counter>()
     val decreaseCounterInternetError: LiveData<Counter> get() = _decreaseCounterInternetError
-
 
     fun getAllCounters(isInternetAccess: Boolean) {
         if (!isInternetAccess) showInternetError()

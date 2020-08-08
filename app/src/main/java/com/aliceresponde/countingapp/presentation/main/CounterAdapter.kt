@@ -1,6 +1,5 @@
 package com.aliceresponde.countingapp.presentation.main
 
-import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -57,21 +56,19 @@ class CounterAdapter(
                     itemView.setBackgroundResource(R.drawable.selected_counter_background)
                     selectedIcon.visibility = VISIBLE
                     amountGroup.visibility = GONE
-                }else{
+                } else {
                     amountGroup.visibility = VISIBLE
                     selectedIcon.visibility = GONE
                     itemView.setBackgroundResource(0)
                 }
 
                 amountTextView.text = counter.count.toString()
-                decreaseView.backgroundTintList =
+                decreaseView.setColorFilter(
                     if (counter.count == 0)
-                        ColorStateList.valueOf(
-                            ContextCompat.getColor(itemView.context, R.color.grayColor)
-                        )
-                    else ColorStateList.valueOf(
+                        ContextCompat.getColor(itemView.context, R.color.grayColor)
+                    else
                         ContextCompat.getColor(itemView.context, R.color.orangeColor)
-                    )
+                )
 
                 increaseView.setOnClickListener {
                     callback.onIncreaseCounter(counter, adapterPosition)
@@ -97,12 +94,13 @@ class CounterAdapter(
         data = ArrayList(counters)
     }
 
-    fun selectCounter(selectedCounter: Counter){
-        selectedItems.add(selectedCounter)
+    fun selectCounter(selectedCounters: List<Counter>) {
+        selectedItems.clear()
+        selectedItems.addAll(selectedCounters)
         notifyDataSetChanged()
     }
 
-    fun removeSelectedCounters(){
+    fun removeSelectedCounters() {
         selectedItems.clear()
         notifyDataSetChanged()
     }
