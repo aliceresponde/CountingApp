@@ -79,6 +79,7 @@ class MainFragment : Fragment(), CounterAdapterListeners {
             ?.observe(viewLifecycleOwner, Observer { newCounter ->
                 viewModel.addNewCounter(newCounter)
             })
+
         viewModel.counters.observe(viewLifecycleOwner, Observer {
             binding.countersLabel.text = getString(R.string.items, viewModel.countCounters())
             binding.totalCounters.text = getString(R.string.times, viewModel.getCountersTimes())

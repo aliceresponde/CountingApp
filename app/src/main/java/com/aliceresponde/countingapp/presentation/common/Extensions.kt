@@ -3,6 +3,7 @@ package com.aliceresponde.countingapp.presentation.common
 import android.content.Context
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import androidx.annotation.ArrayRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -28,4 +29,10 @@ fun Fragment.hideKeyboard() {
     if (activity is AppCompatActivity) {
         activity.hideKeyboard()
     }
+}
+
+fun Fragment.getStringArray(@ArrayRes id: Int): List<String> {
+    activity?.let {
+        return resources.getStringArray(id).toList()
+    } ?: return listOf()
 }

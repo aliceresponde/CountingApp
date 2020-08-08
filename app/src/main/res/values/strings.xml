@@ -46,7 +46,7 @@
         <item>Chicken sandwich</item>
     </string-array>
 
-    <string-array name="Misc">
+    <string-array name="misc">
         <item>Times sneezed</item>
         <item>Nap</item>
         <item>Day Dreaming</item>

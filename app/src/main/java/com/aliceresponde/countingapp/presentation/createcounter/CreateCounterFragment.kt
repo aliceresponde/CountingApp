@@ -39,6 +39,9 @@ class CreateCounterFragment : Fragment() {
             lifecycleOwner = this@CreateCounterFragment
             viewModel = this@CreateCounterFragment.viewModel
             seeSamples.setOnClickListener {
+                val action =
+                    CreateCounterFragmentDirections.actionCreateCounterFragmentToCounterSampleFragment()
+                findNavController().navigate(action)
             }
 
             cruzBtn.setOnClickListener {
@@ -49,9 +52,24 @@ class CreateCounterFragment : Fragment() {
             saveBtn.setOnClickListener {
                 hideKeyboard()
                 val title = counterTitleEdit.text.toString()
-                this@CreateCounterFragment.viewModel.createCounter(title, networkConnection.isConnected())
+                this@CreateCounterFragment.viewModel.createCounter(
+                    title,
+                    networkConnection.isConnected()
+                )
             }
         }
+
+        setupObservers()
+
+        return binding.root
+    }
+
+    private fun setupObservers() {
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String>("counter_title")
+            ?.observe(viewLifecycleOwner, Observer {
+                binding.counterTitleEdit.setText(it)
+                binding.counterTitleEdit.selectionEnd
+            })
 
         viewModel.newCounter.observe(viewLifecycleOwner, Observer {
             navigateToMainScreen(it)
@@ -60,8 +78,6 @@ class CreateCounterFragment : Fragment() {
         viewModel.showInternetError.observe(viewLifecycleOwner, Observer {
             showNoInternetDialog()
         })
-
-        return binding.root
     }
 
     private fun showNoInternetDialog() {
