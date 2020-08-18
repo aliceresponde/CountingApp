@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "565028790395",
+    "firebase_url": "https://counterapp-1a1e5.firebaseio.com",
+    "project_id": "counterapp-1a1e5",
+    "storage_bucket": "counterapp-1a1e5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:565028790395:android:ca964f8cbaee523f3802de",
+        "android_client_info": {
+          "package_name": "com.aliceresponde.countingapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "565028790395-7vd211p76rk4vqlb1cukd6i06ifhg8h7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMeC7BnZCFfPyUezGfMpXnlMPevWOwghM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "565028790395-7vd211p76rk4vqlb1cukd6i06ifhg8h7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
