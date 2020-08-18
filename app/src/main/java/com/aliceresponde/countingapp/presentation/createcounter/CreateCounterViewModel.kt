@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aliceresponde.countingapp.domain.model.Counter
 import com.aliceresponde.countingapp.domain.usecase.create.CreateCounterUseCase
+import com.aliceresponde.countingapp.presentation.common.Event
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -25,12 +26,12 @@ class CreateCounterViewModel @ViewModelInject constructor(private val createCoun
     private val _loadingVisibility = MutableLiveData<Int>(GONE)
     val loadingVisibility: LiveData<Int> get() = _loadingVisibility
 
-    private val _showInternetError = MutableLiveData<Boolean>()
-    val showInternetError: LiveData<Boolean> get() = _showInternetError
+    private val _showInternetError = MutableLiveData<Event<Boolean>>()
+    val showInternetError: LiveData<Event<Boolean>> get() = _showInternetError
 
 
     fun createCounter(title: String, isInternetAccess: Boolean) {
-        if (!isInternetAccess) _showInternetError.value = true
+        if (!isInternetAccess) _showInternetError.value = Event(true)
         else {
             try {
                 viewModelScope.launch {

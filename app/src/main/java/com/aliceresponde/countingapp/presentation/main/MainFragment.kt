@@ -16,6 +16,7 @@ import com.aliceresponde.countingapp.R
 import com.aliceresponde.countingapp.data.remote.NetworkConnection
 import com.aliceresponde.countingapp.databinding.FragmentMainBinding
 import com.aliceresponde.countingapp.domain.model.Counter
+import com.aliceresponde.countingapp.presentation.common.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -95,11 +96,11 @@ class MainFragment : Fragment(), CounterAdapterListeners {
             showDeleteInternetErrorDialog()
         })
 
-        viewModel.increaseCounterInternetError.observe(viewLifecycleOwner, Observer {
+        viewModel.increaseCounterInternetError.observe(viewLifecycleOwner, EventObserver {
             showIncreaseCounterErrorDialog(it)
         })
 
-        viewModel.decreaseCounterInternetError.observe(viewLifecycleOwner, Observer {
+        viewModel.decreaseCounterInternetError.observe(viewLifecycleOwner, EventObserver {
             showDecreaseCounterErrorDialog(it)
         })
     }
@@ -129,9 +130,9 @@ class MainFragment : Fragment(), CounterAdapterListeners {
                 )
             )
                 .setMessage(R.string.dialog_delete_counter_error_message)
-                .setPositiveButton(getString(R.string.dismiss)) { dialog, _ -> dialog.dismiss() }
+                .setPositiveButton(getString(R.string.dismiss)) { dialog, _ -> dialog?.dismiss() }
                 .setNegativeButton(getString(R.string.retry)) { dialog, _ ->
-                    dialog.dismiss()
+                    dialog?.dismiss()
                     viewModel.increaseCounter(counter, networkConnection.isConnected())
                 }
             val dialog = builder.create()
@@ -151,9 +152,9 @@ class MainFragment : Fragment(), CounterAdapterListeners {
                 )
             )
                 .setMessage(R.string.dialog_delete_counter_error_message)
-                .setPositiveButton(getString(R.string.dismiss)) { dialog, _ -> dialog.dismiss() }
+                .setPositiveButton(getString(R.string.dismiss)) { dialog, _ -> dialog?.dismiss() }
                 .setNegativeButton(getString(R.string.retry)) { dialog, _ ->
-                    dialog.dismiss()
+                    dialog?.dismiss()
                     viewModel.decreaseCounter(counter, networkConnection.isConnected())
                 }
             val dialog = builder.create()
@@ -171,7 +172,7 @@ class MainFragment : Fragment(), CounterAdapterListeners {
                     R.string.dialog_delete_counter_error_message
                 )
             )
-                .setPositiveButton(getString(R.string.ok)) { dialog, _ -> dialog.dismiss() }
+                .setPositiveButton(getString(R.string.ok)) { dialog, _ -> dialog?.dismiss() }
             val dialog = builder.create()
             dialog.setCancelable(false)
             dialog.show()
@@ -184,10 +185,12 @@ class MainFragment : Fragment(), CounterAdapterListeners {
             val last = viewModel.selectedCounters.value!!.last()
             builder.setMessage(getString(R.string.delete_counter_title, last.title ?: ""))
                 .setPositiveButton(getString(R.string.delete)) { dialog, _ ->
-                    dialog.dismiss()
+                    dialog?.dismiss()
                     viewModel.deleteSelectedCounter(networkConnection.isConnected())
                 }
-                .setNegativeButton(getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
+                .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                    dialog?.dismiss()
+                }
             val dialog = builder.create()
             dialog.setCancelable(false)
             dialog.show()

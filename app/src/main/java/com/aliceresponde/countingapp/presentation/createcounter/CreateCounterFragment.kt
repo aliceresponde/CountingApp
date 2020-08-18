@@ -14,6 +14,7 @@ import com.aliceresponde.countingapp.R
 import com.aliceresponde.countingapp.data.remote.NetworkConnection
 import com.aliceresponde.countingapp.databinding.FragmentCreateCounterBinding
 import com.aliceresponde.countingapp.domain.model.Counter
+import com.aliceresponde.countingapp.presentation.common.EventObserver
 import com.aliceresponde.countingapp.presentation.common.hideKeyboard
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -75,7 +76,7 @@ class CreateCounterFragment : Fragment() {
             navigateToMainScreen(it)
         })
 
-        viewModel.showInternetError.observe(viewLifecycleOwner, Observer {
+        viewModel.showInternetError.observe(viewLifecycleOwner, EventObserver {
             showNoInternetDialog()
         })
     }

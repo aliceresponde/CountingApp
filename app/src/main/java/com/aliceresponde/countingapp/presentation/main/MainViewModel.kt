@@ -14,6 +14,7 @@ import com.aliceresponde.countingapp.domain.usecase.decrease.DecreaseCounterUseC
 import com.aliceresponde.countingapp.domain.usecase.delete.DeleteCounterUseCase
 import com.aliceresponde.countingapp.domain.usecase.getcounters.GetCountersUseCase
 import com.aliceresponde.countingapp.domain.usecase.increase.IncreaseCounterUseCase
+import com.aliceresponde.countingapp.presentation.common.Event
 import dagger.hilt.android.scopes.ActivityScoped
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -57,34 +58,31 @@ class MainViewModel @ViewModelInject constructor(
     private val _selectedCounters = MutableLiveData<MutableList<Counter>>()
     val selectedCounters: LiveData<MutableList<Counter>> get() = _selectedCounters
 
-    private val _deleteInternetError = MutableLiveData<Boolean>()
-    val deleteInternetError: LiveData<Boolean> get() = _deleteInternetError
+    private val _deleteInternetError = MutableLiveData<Event<Boolean>>()
+    val deleteInternetError: LiveData<Event<Boolean>> get() = _deleteInternetError
 
-    private val _increaseCounterInternetError = MutableLiveData<Counter>()
-    val increaseCounterInternetError: LiveData<Counter> get() = _increaseCounterInternetError
+    private val _increaseCounterInternetError = MutableLiveData<Event<Counter>>()
+    val increaseCounterInternetError: LiveData<Event<Counter>> get() = _increaseCounterInternetError
 
-    private val _decreaseCounterInternetError = MutableLiveData<Counter>()
-    val decreaseCounterInternetError: LiveData<Counter> get() = _decreaseCounterInternetError
+    private val _decreaseCounterInternetError = MutableLiveData<Event<Counter>>()
+    val decreaseCounterInternetError: LiveData<Event<Counter>> get() = _decreaseCounterInternetError
 
     fun getAllCounters(isInternetAccess: Boolean) {
-        if (!isInternetAccess) showInternetError()
-        else
-            viewModelScope.launch {
-                withContext(IO) {
-                    showLoading()
-                    val result = getCountersUC()
-                    when (result) {
-                        is SuccessViewState -> setupUiContent(result.data ?: listOf())
-                        is ErrorViewState -> showInternetError()
-                    }
+        viewModelScope.launch {
+            withContext(IO) {
+                showLoading()
+                when (val result = getCountersUC()) {
+                    is SuccessViewState -> setupUiContent(result.data ?: listOf())
+                    is ErrorViewState -> showInternetError()
                 }
             }
+        }
     }
 
     //
 
     fun increaseCounter(counter: Counter, isInternetAccess: Boolean) {
-        if (!isInternetAccess) _increaseCounterInternetError.postValue(counter)
+        if (!isInternetAccess) _increaseCounterInternetError.postValue(Event(counter))
         else {
             viewModelScope.launch {
                 withContext(IO) {
@@ -99,7 +97,7 @@ class MainViewModel @ViewModelInject constructor(
     }
 
     fun decreaseCounter(counter: Counter, isInternetAccess: Boolean) {
-        if (!isInternetAccess) _decreaseCounterInternetError.postValue(counter)
+        if (!isInternetAccess) _decreaseCounterInternetError.postValue(Event(counter))
         else if (counter.count == 0) return
         else {
             viewModelScope.launch {
@@ -115,7 +113,7 @@ class MainViewModel @ViewModelInject constructor(
     }
 
     fun deleteSelectedCounter(isInternetAccess: Boolean) {
-        if (!isInternetAccess) _deleteInternetError.postValue(true)
+        if (!isInternetAccess) _deleteInternetError.postValue(Event(true))
         else {
             val counters = selectedCounters.value!!
             val counterIss = counters.map { it.id }

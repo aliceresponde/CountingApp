@@ -10,8 +10,7 @@ import com.aliceresponde.countingapp.repository.SuccessState
 
 class GetCountersUseCaseImp(private val repository: CounterRepository) : GetCountersUseCase {
     override suspend fun invoke(): UiState<List<Counter>> {
-        val result = repository.getAllCounters()
-        return when (result) {
+        return when (val result = repository.getAllCounters()) {
             is SuccessState -> {
                 val data = result.data ?: listOf()
                 SuccessViewState(data.map { Counter(it.id, it.title, it.count) })

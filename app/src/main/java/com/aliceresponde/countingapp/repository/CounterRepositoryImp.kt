@@ -25,6 +25,8 @@ class CounterRepositoryImp(
             }
         } catch (e: NoInternetException) {
             return localDataSource.getAllCounters()
+        }catch (e: Throwable){
+            return localDataSource.getAllCounters()
         }
     }
 
