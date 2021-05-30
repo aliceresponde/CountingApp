@@ -3,6 +3,7 @@ package com.aliceresponde.countingapp.data.local
 import com.aliceresponde.countingapp.data.dataSource.LocalDataSource
 import com.aliceresponde.countingapp.repository.DataState
 import com.aliceresponde.countingapp.repository.SuccessState
+import kotlinx.coroutines.flow.Flow
 
 class RoomDataSource(private val db: AppDatabase) : LocalDataSource {
     private val dao: CounterDao = db.counterDao()
@@ -51,6 +52,10 @@ class RoomDataSource(private val db: AppDatabase) : LocalDataSource {
         dao.deleteAll()
         val data = dao.getAllCounters()
         return SuccessState(data)
+    }
+
+    override fun filterByName(query: String): DataState<Flow<List<CounterEntity>>> {
+        return  SuccessState(dao.filterByName(query))
     }
 
     private suspend fun deleteCounter(id: String): DataState<List<CounterEntity>> {

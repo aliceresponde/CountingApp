@@ -8,12 +8,20 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aliceresponde.countingapp.domain.model.Counter
+import com.aliceresponde.countingapp.domain.model.ErrorViewState
+import com.aliceresponde.countingapp.domain.model.SuccessViewState
 import com.aliceresponde.countingapp.domain.usecase.create.CreateCounterUseCase
+import com.aliceresponde.countingapp.presentation.common.Event
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class CreateCounterViewModel @ViewModelInject constructor(private val createCounterUC: CreateCounterUseCase) :
+
+class CreateCounterViewModel @ViewModelInject constructor(
+    private val createCounterUC: CreateCounterUseCase,
+    private val coroutineDispatcher: CoroutineDispatcher = IO,
+) :
     ViewModel() {
 
     private val _newCounter = MutableLiveData<Counter>()
@@ -25,31 +33,43 @@ class CreateCounterViewModel @ViewModelInject constructor(private val createCoun
     private val _loadingVisibility = MutableLiveData<Int>(GONE)
     val loadingVisibility: LiveData<Int> get() = _loadingVisibility
 
-    private val _showInternetError = MutableLiveData<Boolean>()
-    val showInternetError: LiveData<Boolean> get() = _showInternetError
+    private val _showInternetError = MutableLiveData<Event<Boolean>>()
+    val showInternetError: LiveData<Event<Boolean>> get() = _showInternetError
+
+    private val _clearTitle = MutableLiveData<Event<Boolean>>()
+    val clearTitle: LiveData<Event<Boolean>> get() = _clearTitle
+
+    private val _back = MutableLiveData<Event<Boolean>>()
+    val back: LiveData<Event<Boolean>> get() = _back
+
+    private val _showEmptyCounter = MutableLiveData<Event<Boolean>>()
+    val showEmptyCounter: LiveData<Event<Boolean>> get() = _showEmptyCounter
+
+    private val _showCreateCounterError = MutableLiveData<Event<String>>()
+    val showCreateCounterError: LiveData<Event<String>> get() = _showCreateCounterError
 
 
     fun createCounter(title: String, isInternetAccess: Boolean) {
-        if (!isInternetAccess) _showInternetError.value = true
+        if (!isInternetAccess) _showInternetError.value = Event(true)
+        else if (title.isEmpty()) _showEmptyCounter.value = Event(true)
         else {
-            try {
-                viewModelScope.launch {
-                    withContext(IO) {
-                        showLoading()
-                        val result = createCounterUC(title)
-                        val data = result.data
-                        data?.let {
-                            _newCounter.postValue(data)
+            viewModelScope.launch {
+                withContext(coroutineDispatcher) {
+                    showLoading()
+                    when (val result = createCounterUC.invoke(title)) {
+                        is ErrorViewState -> {
+                            _showCreateCounterError.postValue(Event(result.message ?: ""))
                         }
-                        hideLoading()
+                        is SuccessViewState -> {
+                            result.data?.let { _newCounter.postValue(it) }
+                        }
                     }
+                    hideLoading()
                 }
-            } catch (e: Exception) {
-                _saveVisibility.value = VISIBLE
-                _loadingVisibility.value = GONE
             }
         }
     }
+
 
     private fun showLoading() {
         _saveVisibility.postValue(GONE)
@@ -61,5 +81,8 @@ class CreateCounterViewModel @ViewModelInject constructor(private val createCoun
         _loadingVisibility.postValue(GONE)
     }
 
+    fun onCruzClicked() {
+        _clearTitle.value = Event(true)
+    }
 }
 

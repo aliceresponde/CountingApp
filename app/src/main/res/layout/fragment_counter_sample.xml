@@ -8,7 +8,7 @@
     tools:context=".presentation.countersample.CounterSampleFragment">
 
     <ImageView
-        android:id="@+id/cruzView"
+        android:id="@+id/backView"
         android:layout_width="32sp"
         android:layout_height="32dp"
         android:src="@drawable/ic_back"
@@ -24,11 +24,11 @@
         android:textColor="@color/blackColor"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/cruzView"
+        app:layout_constraintBottom_toBottomOf="@+id/backView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/cruzView"
-        app:layout_constraintTop_toTopOf="@+id/cruzView"
+        app:layout_constraintStart_toEndOf="@+id/backView"
+        app:layout_constraintTop_toTopOf="@+id/backView"
         app:layout_constraintVertical_bias="1.0" />
 
     <TextView
@@ -38,8 +38,8 @@
         android:layout_marginTop="40dp"
         android:text="@string/samples_subtitle"
         android:textSize="15sp"
-        app:layout_constraintStart_toStartOf="@+id/cruzView"
-        app:layout_constraintTop_toBottomOf="@+id/cruzView" />
+        app:layout_constraintStart_toStartOf="@+id/backView"
+        app:layout_constraintTop_toBottomOf="@+id/backView" />
 
     <TextView
         android:id="@+id/drinksTitle"
@@ -49,7 +49,7 @@
         android:text="@string/title_drinks"
         android:textColor="@color/blackColor"
         android:textSize="17sp"
-        app:layout_constraintStart_toStartOf="@id/cruzView"
+        app:layout_constraintStart_toStartOf="@id/backView"
         app:layout_constraintTop_toBottomOf="@id/samplesSubTitle" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -73,7 +73,7 @@
         android:text="@string/food_title"
         android:textColor="@color/blackColor"
         android:textSize="17sp"
-        app:layout_constraintStart_toStartOf="@id/cruzView"
+        app:layout_constraintStart_toStartOf="@id/backView"
         app:layout_constraintTop_toBottomOf="@id/drinksRecycler" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -97,7 +97,7 @@
         android:text="@string/misc_title"
         android:textColor="@color/blackColor"
         android:textSize="17sp"
-        app:layout_constraintStart_toStartOf="@id/cruzView"
+        app:layout_constraintStart_toStartOf="@id/backView"
         app:layout_constraintTop_toBottomOf="@id/foodRecycler" />
 
     <androidx.recyclerview.widget.RecyclerView

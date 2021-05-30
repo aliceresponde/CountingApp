@@ -23,6 +23,7 @@ class CounterAdapter(
     private val callback: CounterAdapterListeners
 ) :
     RecyclerView.Adapter<CounterAdapter.CounterViewHolder>(), Filterable {
+
     private val differCallback = object : DiffUtil.ItemCallback<Counter>() {
         override fun areItemsTheSame(oldItem: Counter, newItem: Counter): Boolean {
             return oldItem.id == newItem.id

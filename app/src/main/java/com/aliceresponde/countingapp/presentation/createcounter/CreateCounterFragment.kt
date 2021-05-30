@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -14,6 +15,7 @@ import com.aliceresponde.countingapp.R
 import com.aliceresponde.countingapp.data.remote.NetworkConnection
 import com.aliceresponde.countingapp.databinding.FragmentCreateCounterBinding
 import com.aliceresponde.countingapp.domain.model.Counter
+import com.aliceresponde.countingapp.presentation.common.EventObserver
 import com.aliceresponde.countingapp.presentation.common.hideKeyboard
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -27,12 +29,10 @@ class CreateCounterFragment : Fragment() {
     @Inject
     lateinit var networkConnection: NetworkConnection
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
+        savedInstanceState: Bundle?,
+    ): View {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_create_counter, container, false)
         binding.apply {
@@ -45,8 +45,7 @@ class CreateCounterFragment : Fragment() {
             }
 
             cruzBtn.setOnClickListener {
-                counterTitleEdit.text?.clear()
-                hideKeyboard()
+                viewModel?.onCruzClicked()
             }
 
             saveBtn.setOnClickListener {
@@ -64,6 +63,11 @@ class CreateCounterFragment : Fragment() {
         return binding.root
     }
 
+    private fun FragmentCreateCounterBinding.clearTitle() {
+        counterTitleEdit.text?.clear()
+        hideKeyboard()
+    }
+
     private fun setupObservers() {
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String>("counter_title")
             ?.observe(viewLifecycleOwner, Observer {
@@ -71,13 +75,24 @@ class CreateCounterFragment : Fragment() {
                 binding.counterTitleEdit.selectionEnd
             })
 
-        viewModel.newCounter.observe(viewLifecycleOwner, Observer {
-            navigateToMainScreen(it)
+        viewModel.newCounter.observe(viewLifecycleOwner) { navigateToMainScreen(it) }
+        viewModel.showEmptyCounter.observe(viewLifecycleOwner, EventObserver {
+            if (it)
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.empty_counter),
+                    Toast.LENGTH_LONG
+                ).show()
         })
-
-        viewModel.showInternetError.observe(viewLifecycleOwner, Observer {
-            showNoInternetDialog()
+        viewModel.showInternetError.observe(viewLifecycleOwner) { showNoInternetDialog() }
+        viewModel.clearTitle.observe(viewLifecycleOwner, EventObserver {
+            if (it)
+                binding.counterTitleEdit.setText("")
         })
+        viewModel.showCreateCounterError.observe(viewLifecycleOwner) {
+            if (!it.hasBeenHandled)
+                Toast.makeText(requireContext(), it.peekContent(), Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun showNoInternetDialog() {

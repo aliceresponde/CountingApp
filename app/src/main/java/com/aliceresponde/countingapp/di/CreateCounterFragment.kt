@@ -6,11 +6,15 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityRetainedComponent
+import kotlinx.coroutines.CoroutineDispatcher
 
 @InstallIn(ActivityRetainedComponent::class)
 @Module
 object CreateCounterFragment {
     @Provides
-    fun providesCreateCounterViewModel(useCase: CreateCounterUseCase) =
-        CreateCounterViewModel(useCase)
+    fun providesCreateCounterViewModel(
+        useCase: CreateCounterUseCase,
+        coroutineDispatcher: CoroutineDispatcher
+    ) =
+        CreateCounterViewModel(useCase, coroutineDispatcher)
 }

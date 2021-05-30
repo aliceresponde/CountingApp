@@ -10,12 +10,12 @@ import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.aliceresponde.countingapp.R
 import com.aliceresponde.countingapp.data.remote.NetworkConnection
 import com.aliceresponde.countingapp.databinding.FragmentMainBinding
 import com.aliceresponde.countingapp.domain.model.Counter
+import com.aliceresponde.countingapp.presentation.common.EventObserver
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -43,6 +43,7 @@ class MainFragment : Fragment(), CounterAdapterListeners {
             countersList.adapter = adapter
             searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
+                    adapter.filter.filter(query!!)
                     return false
                 }
 
@@ -55,12 +56,12 @@ class MainFragment : Fragment(), CounterAdapterListeners {
                 navigateToCreateCounterFragment()
             }
             swipeToRefresh.setOnRefreshListener {
-                this@MainFragment.viewModel.getAllCounters(networkConnection.isConnected())
+                this@MainFragment.viewModel.synData(networkConnection.isConnected())
                 swipeToRefresh.isRefreshing = false
             }
             swipeToRefresh.setColorSchemeResources(R.color.orangeColor)
 
-            retry.setOnClickListener { this@MainFragment.viewModel.getAllCounters(networkConnection.isConnected()) }
+            retry.setOnClickListener { this@MainFragment.viewModel.synData(networkConnection.isConnected()) }
             cruzBtn.setOnClickListener { this@MainFragment.viewModel.clearCurrentSelection() }
             deleteView.setOnClickListener { showDeleteCounterDialog() }
             shareBtn.setOnClickListener {
@@ -70,36 +71,34 @@ class MainFragment : Fragment(), CounterAdapterListeners {
         }
 
         setupObservers()
-        viewModel.getAllCounters(networkConnection.isConnected())
+        viewModel.synData(networkConnection.isConnected())
         return binding.root
     }
 
     private fun setupObservers() {
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Counter>("key")
-            ?.observe(viewLifecycleOwner, Observer { newCounter ->
-                viewModel.addNewCounter(newCounter)
-            })
+            ?.observe(viewLifecycleOwner) { newCounter -> viewModel.addNewCounter(newCounter) }
 
-        viewModel.counters.observe(viewLifecycleOwner, Observer {
+        viewModel.counters.observe(viewLifecycleOwner) {
             binding.countersLabel.text = getString(R.string.items, viewModel.countCounters())
             binding.totalCounters.text = getString(R.string.times, viewModel.getCountersTimes())
             adapter.update(it)
-        })
+        }
 
-        viewModel.selectedCounters.observe(viewLifecycleOwner, Observer {
+        viewModel.selectedCounters.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) adapter.selectCounter(it)
             else adapter.removeSelectedCounters()
-        })
+        }
 
-        viewModel.deleteInternetError.observe(viewLifecycleOwner, Observer {
+        viewModel.deleteInternetError.observe(viewLifecycleOwner) {
             showDeleteInternetErrorDialog()
-        })
+        }
 
-        viewModel.increaseCounterInternetError.observe(viewLifecycleOwner, Observer {
+        viewModel.increaseCounterInternetError.observe(viewLifecycleOwner, EventObserver {
             showIncreaseCounterErrorDialog(it)
         })
 
-        viewModel.decreaseCounterInternetError.observe(viewLifecycleOwner, Observer {
+        viewModel.decreaseCounterInternetError.observe(viewLifecycleOwner, EventObserver {
             showDecreaseCounterErrorDialog(it)
         })
     }
@@ -129,9 +128,9 @@ class MainFragment : Fragment(), CounterAdapterListeners {
                 )
             )
                 .setMessage(R.string.dialog_delete_counter_error_message)
-                .setPositiveButton(getString(R.string.dismiss)) { dialog, _ -> dialog.dismiss() }
+                .setPositiveButton(getString(R.string.dismiss)) { dialog, _ -> dialog?.dismiss() }
                 .setNegativeButton(getString(R.string.retry)) { dialog, _ ->
-                    dialog.dismiss()
+                    dialog?.dismiss()
                     viewModel.increaseCounter(counter, networkConnection.isConnected())
                 }
             val dialog = builder.create()
@@ -151,9 +150,9 @@ class MainFragment : Fragment(), CounterAdapterListeners {
                 )
             )
                 .setMessage(R.string.dialog_delete_counter_error_message)
-                .setPositiveButton(getString(R.string.dismiss)) { dialog, _ -> dialog.dismiss() }
+                .setPositiveButton(getString(R.string.dismiss)) { dialog, _ -> dialog?.dismiss() }
                 .setNegativeButton(getString(R.string.retry)) { dialog, _ ->
-                    dialog.dismiss()
+                    dialog?.dismiss()
                     viewModel.decreaseCounter(counter, networkConnection.isConnected())
                 }
             val dialog = builder.create()
@@ -171,7 +170,7 @@ class MainFragment : Fragment(), CounterAdapterListeners {
                     R.string.dialog_delete_counter_error_message
                 )
             )
-                .setPositiveButton(getString(R.string.ok)) { dialog, _ -> dialog.dismiss() }
+                .setPositiveButton(getString(R.string.ok)) { dialog, _ -> dialog?.dismiss() }
             val dialog = builder.create()
             dialog.setCancelable(false)
             dialog.show()
@@ -184,10 +183,12 @@ class MainFragment : Fragment(), CounterAdapterListeners {
             val last = viewModel.selectedCounters.value!!.last()
             builder.setMessage(getString(R.string.delete_counter_title, last.title ?: ""))
                 .setPositiveButton(getString(R.string.delete)) { dialog, _ ->
-                    dialog.dismiss()
+                    dialog?.dismiss()
                     viewModel.deleteSelectedCounter(networkConnection.isConnected())
                 }
-                .setNegativeButton(getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
+                .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                    dialog?.dismiss()
+                }
             val dialog = builder.create()
             dialog.setCancelable(false)
             dialog.show()
