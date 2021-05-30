@@ -1,6 +1,7 @@
 package com.aliceresponde.countingapp.data.local
 
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CounterDao {
@@ -8,7 +9,7 @@ interface CounterDao {
     fun getAllCounters(): List<CounterEntity>
 
     @Query("SELECT * from counter_table WHERE id =:id")
-    fun getCounterBy(id:String): CounterEntity
+    fun getCounterBy(id: String): CounterEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(counters: List<CounterEntity>)
@@ -31,4 +32,7 @@ interface CounterDao {
         insertAll(counters)
         return getAllCounters()
     }
+
+    @Query("SELECT * from counter_table WHERE title =:query")
+    fun filterByName(query: String): Flow<List<CounterEntity>>
 }

@@ -33,6 +33,7 @@
     <string name="title_drinks">Drinks</string>
     <string name="food_title">food</string>
     <string name="misc_title">Misc</string>
+    <string name="empty_counter">You cant create a empty counter</string>
 
     <string-array name="drinks">
         <item>Cup of coffee</item>

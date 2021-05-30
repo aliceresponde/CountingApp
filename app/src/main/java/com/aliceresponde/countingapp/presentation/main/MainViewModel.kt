@@ -12,10 +12,12 @@ import com.aliceresponde.countingapp.domain.model.ErrorViewState
 import com.aliceresponde.countingapp.domain.model.SuccessViewState
 import com.aliceresponde.countingapp.domain.usecase.decrease.DecreaseCounterUseCase
 import com.aliceresponde.countingapp.domain.usecase.delete.DeleteCounterUseCase
+import com.aliceresponde.countingapp.domain.usecase.filter.FilterDataUseCase
 import com.aliceresponde.countingapp.domain.usecase.getcounters.GetCountersUseCase
 import com.aliceresponde.countingapp.domain.usecase.increase.IncreaseCounterUseCase
 import com.aliceresponde.countingapp.presentation.common.Event
 import dagger.hilt.android.scopes.ActivityScoped
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -25,7 +27,9 @@ class MainViewModel @ViewModelInject constructor(
     private val getCountersUC: GetCountersUseCase,
     private val increaseCounterUC: IncreaseCounterUseCase,
     private val decreaseCounterUC: DecreaseCounterUseCase,
-    private val deleteCounterUC: DeleteCounterUseCase
+    private val deleteCounterUC: DeleteCounterUseCase,
+    private val filterData: FilterDataUseCase,
+    private val coroutineDispatcher: CoroutineDispatcher = IO
 ) : ViewModel() {
 
     private val _loadingVisibility = MutableLiveData<Int>(GONE)
@@ -46,7 +50,7 @@ class MainViewModel @ViewModelInject constructor(
     private val _addCounterVisibility = MutableLiveData<Int>(GONE)
     val addCounterVisibility: LiveData<Int> get() = _addCounterVisibility
 
-    private val _counterListVisibility = MutableLiveData<Int>(GONE)
+    private val _counterListVisibility = MutableLiveData(GONE)
     val counterListVisibility: LiveData<Int> get() = _counterListVisibility
 
     private val _isFilteredResultEmptyVisibility = MutableLiveData<Int>()
@@ -67,7 +71,8 @@ class MainViewModel @ViewModelInject constructor(
     private val _decreaseCounterInternetError = MutableLiveData<Event<Counter>>()
     val decreaseCounterInternetError: LiveData<Event<Counter>> get() = _decreaseCounterInternetError
 
-    fun getAllCounters(isInternetAccess: Boolean) {
+    // TODO use flow to listen the counters then update use cases to do not return data
+    fun synData(isInternetAccess: Boolean) {
         viewModelScope.launch {
             withContext(IO) {
                 showLoading()
@@ -79,13 +84,15 @@ class MainViewModel @ViewModelInject constructor(
         }
     }
 
-    //
+    fun filterData(query: String) {
+
+    }
 
     fun increaseCounter(counter: Counter, isInternetAccess: Boolean) {
         if (!isInternetAccess) _increaseCounterInternetError.postValue(Event(counter))
         else {
             viewModelScope.launch {
-                withContext(IO) {
+                withContext(coroutineDispatcher) {
                     showLoading()
                     when (val result = increaseCounterUC(counter.id)) {
                         is SuccessViewState -> setupUiContent(result.data ?: listOf())
@@ -101,7 +108,7 @@ class MainViewModel @ViewModelInject constructor(
         else if (counter.count == 0) return
         else {
             viewModelScope.launch {
-                withContext(IO) {
+                withContext(coroutineDispatcher) {
                     showLoading()
                     when (val result = decreaseCounterUC(counter.id)) {
                         is SuccessViewState -> setupUiContent(result.data ?: listOf())
@@ -118,7 +125,7 @@ class MainViewModel @ViewModelInject constructor(
             val counters = selectedCounters.value!!
             val counterIss = counters.map { it.id }
             viewModelScope.launch {
-                withContext(IO) {
+                withContext(coroutineDispatcher) {
                     showLoading()
                     when (val result = deleteCounterUC(counterIss)) {
                         is SuccessViewState -> {

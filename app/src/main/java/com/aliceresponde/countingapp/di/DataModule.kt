@@ -12,12 +12,16 @@ import com.aliceresponde.countingapp.data.remote.CornerApiService
 import com.aliceresponde.countingapp.data.remote.NetworkConnection
 import com.aliceresponde.countingapp.data.remote.NetworkConnectionInterceptor
 import com.aliceresponde.countingapp.data.remote.RetrofitDataSource
+import com.aliceresponde.countingapp.domain.mapper.DataToDomainMapper
+import com.aliceresponde.countingapp.domain.mapper.DataToDomainMapperImp
 import com.aliceresponde.countingapp.domain.usecase.create.CreateCounterUseCase
 import com.aliceresponde.countingapp.domain.usecase.create.CreateCounterUseCaseImp
 import com.aliceresponde.countingapp.domain.usecase.decrease.DecreaseCounterUseCase
 import com.aliceresponde.countingapp.domain.usecase.decrease.DecreaseCounterUseCaseImp
 import com.aliceresponde.countingapp.domain.usecase.delete.DeleteCounterUseCase
 import com.aliceresponde.countingapp.domain.usecase.delete.DeleteCounterUseCaseImp
+import com.aliceresponde.countingapp.domain.usecase.filter.FilterDataUseCase
+import com.aliceresponde.countingapp.domain.usecase.filter.FilterDataUseCaseImp
 import com.aliceresponde.countingapp.domain.usecase.getcounters.GetCountersUseCase
 import com.aliceresponde.countingapp.domain.usecase.getcounters.GetCountersUseCaseImp
 import com.aliceresponde.countingapp.domain.usecase.increase.IncreaseCounterUseCase
@@ -29,6 +33,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import okhttp3.Interceptor
 import javax.inject.Singleton
 
@@ -59,7 +65,7 @@ object DataModule {
     @Singleton
     fun provideNetworkConnection(
         @ApplicationContext context: Context,
-        connectivityManager: ConnectivityManager
+        connectivityManager: ConnectivityManager,
     ) = NetworkConnection(context, connectivityManager)
 
 //    ----------------------- Repository----------------------
@@ -77,7 +83,7 @@ object DataModule {
     @Singleton
     fun provideCounterRepository(
         localDataSource: LocalDataSource,
-        remoteDataSource: RemoteDataSource
+        remoteDataSource: RemoteDataSource,
     ): CounterRepository = CounterRepositoryImp(localDataSource, remoteDataSource)
 
     //    ----------------------- UseCase-------------------------
@@ -98,6 +104,22 @@ object DataModule {
         DeleteCounterUseCaseImp(repository)
 
     @Provides
-    fun provideCreateCounterUseCase(repository: CounterRepository): CreateCounterUseCase = CreateCounterUseCaseImp(repository)
+    fun provideCreateCounterUseCase(repository: CounterRepository ): CreateCounterUseCase =
+        CreateCounterUseCaseImp(repository)
+
+    @Provides
+    fun provideFilterDataUseCase(
+        repository: CounterRepository,
+        mapper: DataToDomainMapper,
+    ): FilterDataUseCase = FilterDataUseCaseImp(mapper, repository)
+
+
+    @Provides
+    fun providesIoDispatcher(): CoroutineDispatcher = Dispatchers.IO
+
+    // ----------------------------- Mapper ---------------------------
+    @Provides
+    fun provideDataToDomainMapper(): DataToDomainMapper = DataToDomainMapperImp()
+
 
 }

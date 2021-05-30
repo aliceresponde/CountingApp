@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.aliceresponde.countingapp.R
 import com.aliceresponde.countingapp.databinding.FragmentCounterSampleBinding
@@ -22,7 +23,7 @@ class CounterSampleFragment : Fragment() {
         SampleAdapter(getStringArray(R.array.misc), ::backWithSelectedCounter)
     }
 
-    lateinit var binding: FragmentCounterSampleBinding
+    private lateinit var binding: FragmentCounterSampleBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -31,6 +32,11 @@ class CounterSampleFragment : Fragment() {
             drinksRecycler.adapter = drinksAdapter
             foodRecycler.adapter = foodAdapter
             miscRecycler.adapter = miscAdapter
+            backView.setOnClickListener { view ->
+                view?.let {
+                    Navigation.findNavController(it).popBackStack()
+                }
+            }
         }
 
         return binding.root
