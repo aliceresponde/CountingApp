@@ -1,28 +1,29 @@
 package com.aliceresponde.countingapp.presentation.welcome
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.aliceresponde.countingapp.R
 import com.aliceresponde.countingapp.databinding.FragmentWelcomeBinding
+import com.aliceresponde.countingapp.presentation.common.BaseAppFragment
+import com.aliceresponde.countingapp.presentation.common.viewBinding
 
 
-class WelcomeFragment : Fragment() {
+class WelcomeFragment : BaseAppFragment(R.layout.fragment_welcome) {
+    private val binding by viewBinding(FragmentWelcomeBinding::bind)
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val binding = FragmentWelcomeBinding.inflate(inflater, container, false).apply {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupUi()
+    }
+
+    override fun setupUi() {
+        super.setupUi()
+        binding.apply {
             startButton.setOnClickListener {
                 val action = WelcomeFragmentDirections.actionWelcomeFragmentToMainFragment()
                 findNavController().navigate(action)
             }
         }
-
-        return binding.root
     }
 }

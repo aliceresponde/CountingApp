@@ -25,7 +25,7 @@ android {
     buildTypes {
 
         debug {
-            buildConfigField "String", 'BASE_URL', '"https://d9371404d9fb.ngrok.io/"'
+            buildConfigField "String", 'BASE_URL', '"https://a2b6f94ae64c.ngrok.io/"'
         }
 
         release {
@@ -58,6 +58,7 @@ dependencies {
     def nav_version = '2.3.0'
     def room_version = '2.2.5'
     def materialVersion = '1.2.0'
+    def lifecycle_version = '2.2.0'
 
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -71,6 +72,7 @@ dependencies {
     implementation "com.google.android.material:material:$materialVersion"
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'androidx.recyclerview:recyclerview-selection:1.0.0'
+    implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
 
     //ViewModel & LiveData
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0-alpha06'

@@ -34,6 +34,7 @@ class CounterAdapter(
     }
 
     val differ = AsyncListDiffer(this, differCallback)
+    var filteredList = data
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CounterViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -91,8 +92,9 @@ class CounterAdapter(
         selectedItems.contains(counter)
 
     fun update(counters: List<Counter>) {
+        filteredList = counters.toMutableList()
         differ.submitList(counters)
-        data = ArrayList(counters)
+        data = counters.toMutableList()
     }
 
     fun selectCounter(selectedCounters: List<Counter>) {
@@ -109,15 +111,12 @@ class CounterAdapter(
     override fun getFilter(): Filter {
         return object : Filter() {
             override fun performFiltering(constraint: CharSequence?): FilterResults {
-                val filteredList = ArrayList<Counter>()
-                if (constraint.toString().isEmpty())
-                    filteredList.addAll(data)
+                filteredList = if (constraint.isNullOrEmpty()) data
                 else {
                     val filterPattern = constraint.toString().toLowerCase(Locale.ROOT).trim()
-                    for (counter in data) {
-                        if (counter.title.toLowerCase(Locale.ROOT).contains(filterPattern))
-                            filteredList.add(counter)
-                    }
+                    data.filter {
+                        it.title.toLowerCase(Locale.ROOT).contains(filterPattern)
+                    }.toMutableList()
                 }
                 val results = FilterResults()
                 results.values = filteredList

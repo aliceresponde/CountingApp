@@ -28,7 +28,7 @@ class MainViewModel @ViewModelInject constructor(
     private val increaseCounterUC: IncreaseCounterUseCase,
     private val decreaseCounterUC: DecreaseCounterUseCase,
     private val deleteCounterUC: DeleteCounterUseCase,
-    private val filterData: FilterDataUseCase,
+    private val filterData: FilterDataUseCase, // todo use flow to get listen db
     private val coroutineDispatcher: CoroutineDispatcher = IO
 ) : ViewModel() {
 
@@ -82,10 +82,6 @@ class MainViewModel @ViewModelInject constructor(
                 }
             }
         }
-    }
-
-    fun filterData(query: String) {
-
     }
 
     fun increaseCounter(counter: Counter, isInternetAccess: Boolean) {
@@ -166,6 +162,7 @@ class MainViewModel @ViewModelInject constructor(
 
     fun onFilterResult(list: List<Counter>) {
         if (list.isEmpty()) showEmptyFilteredResult()
+        else showData(list)
     }
 
     private fun showEmptyFilteredResult() {

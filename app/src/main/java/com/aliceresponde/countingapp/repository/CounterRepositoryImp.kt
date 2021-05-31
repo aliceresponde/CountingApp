@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 
 class CounterRepositoryImp(
     private val localDataSource: LocalDataSource,
-    private val remoteDataSource: RemoteDataSource,
+    private val remoteDataSource: RemoteDataSource
 ) : CounterRepository {
     override suspend fun getAllCounters(): DataState<List<CounterEntity>> {
         try {

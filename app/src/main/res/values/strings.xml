@@ -15,7 +15,7 @@
     <string name="create_counter_sample_message">Give it a name. Creative block? See <u>examples.</u></string>
     <string name="decrease_icon">decrease icon</string>
     <string name="increase_icon">increase icon</string>
-    <string name="delete_counter_title">Delete \"%1$s\"?</string>
+    <string name="delete_counter_title">Delete selected counters"?</string>
     <string name="delete">DELETE</string>
     <string name="cancel">CANCEL</string>
     <string name="share">Share</string>
@@ -34,6 +34,7 @@
     <string name="food_title">food</string>
     <string name="misc_title">Misc</string>
     <string name="empty_counter">You cant create a empty counter</string>
+    <string name="get_started">GET STARTED</string>
 
     <string-array name="drinks">
         <item>Cup of coffee</item>

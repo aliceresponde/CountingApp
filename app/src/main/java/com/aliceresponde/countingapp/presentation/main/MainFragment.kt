@@ -2,48 +2,42 @@ package com.aliceresponde.countingapp.presentation.main
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.SearchView
 import androidx.appcompat.app.AlertDialog
-import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.aliceresponde.countingapp.R
-import com.aliceresponde.countingapp.data.remote.NetworkConnection
 import com.aliceresponde.countingapp.databinding.FragmentMainBinding
 import com.aliceresponde.countingapp.domain.model.Counter
+import com.aliceresponde.countingapp.presentation.common.BaseAppFragment
 import com.aliceresponde.countingapp.presentation.common.EventObserver
+import com.aliceresponde.countingapp.presentation.common.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class MainFragment : Fragment(), CounterAdapterListeners {
+class MainFragment : BaseAppFragment(R.layout.fragment_main), CounterAdapterListeners {
 
+    private val binding by viewBinding(FragmentMainBinding::bind)
     private val viewModel: MainViewModel by viewModels()
     private val adapter: CounterAdapter by lazy { CounterAdapter(callback = this) }
-    private lateinit var binding: FragmentMainBinding
 
-    @Inject
-    lateinit var networkConnection: NetworkConnection
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupUi()
+        setupObservers()
+        viewModel.synData(networkConnection.isConnected())
+    }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main, container, false)
+    override fun setupUi() {
+        super.setupUi()
         binding.apply {
             viewModel = this@MainFragment.viewModel
             lifecycleOwner = this@MainFragment
             countersList.adapter = adapter
             searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
-                    adapter.filter.filter(query!!)
                     return false
                 }
 
@@ -69,38 +63,37 @@ class MainFragment : Fragment(), CounterAdapterListeners {
                 this@MainFragment.viewModel.clearCurrentSelection()
             }
         }
-
-        setupObservers()
-        viewModel.synData(networkConnection.isConnected())
-        return binding.root
     }
 
-    private fun setupObservers() {
+
+    override fun setupObservers() {
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Counter>("key")
             ?.observe(viewLifecycleOwner) { newCounter -> viewModel.addNewCounter(newCounter) }
 
-        viewModel.counters.observe(viewLifecycleOwner) {
-            binding.countersLabel.text = getString(R.string.items, viewModel.countCounters())
-            binding.totalCounters.text = getString(R.string.times, viewModel.getCountersTimes())
-            adapter.update(it)
+        viewModel.apply {
+            counters.observe(viewLifecycleOwner) {
+                binding.countersLabel.text = getString(R.string.items, viewModel.countCounters())
+                binding.totalCounters.text = getString(R.string.times, viewModel.getCountersTimes())
+                adapter.update(it)
+            }
+
+            selectedCounters.observe(viewLifecycleOwner) {
+                if (it.isNotEmpty()) adapter.selectCounter(it)
+                else adapter.removeSelectedCounters()
+            }
+
+            deleteInternetError.observe(viewLifecycleOwner) {
+                showDeleteInternetErrorDialog()
+            }
+
+            increaseCounterInternetError.observe(viewLifecycleOwner, EventObserver {
+                showIncreaseCounterErrorDialog(it)
+            })
+
+            decreaseCounterInternetError.observe(viewLifecycleOwner, EventObserver {
+                showDecreaseCounterErrorDialog(it)
+            })
         }
-
-        viewModel.selectedCounters.observe(viewLifecycleOwner) {
-            if (it.isNotEmpty()) adapter.selectCounter(it)
-            else adapter.removeSelectedCounters()
-        }
-
-        viewModel.deleteInternetError.observe(viewLifecycleOwner) {
-            showDeleteInternetErrorDialog()
-        }
-
-        viewModel.increaseCounterInternetError.observe(viewLifecycleOwner, EventObserver {
-            showIncreaseCounterErrorDialog(it)
-        })
-
-        viewModel.decreaseCounterInternetError.observe(viewLifecycleOwner, EventObserver {
-            showDecreaseCounterErrorDialog(it)
-        })
     }
 
 
@@ -180,8 +173,7 @@ class MainFragment : Fragment(), CounterAdapterListeners {
     private fun showDeleteCounterDialog() {
         activity?.let {
             val builder = AlertDialog.Builder(it, R.style.CustomAlertDialog)
-            val last = viewModel.selectedCounters.value!!.last()
-            builder.setMessage(getString(R.string.delete_counter_title, last.title ?: ""))
+            builder.setMessage(getString(R.string.delete_counter_title))
                 .setPositiveButton(getString(R.string.delete)) { dialog, _ ->
                     dialog?.dismiss()
                     viewModel.deleteSelectedCounter(networkConnection.isConnected())

@@ -14,27 +14,29 @@ import androidx.navigation.fragment.findNavController
 import com.aliceresponde.countingapp.R
 import com.aliceresponde.countingapp.data.remote.NetworkConnection
 import com.aliceresponde.countingapp.databinding.FragmentCreateCounterBinding
+import com.aliceresponde.countingapp.databinding.FragmentWelcomeBinding
 import com.aliceresponde.countingapp.domain.model.Counter
+import com.aliceresponde.countingapp.presentation.common.BaseAppFragment
 import com.aliceresponde.countingapp.presentation.common.EventObserver
 import com.aliceresponde.countingapp.presentation.common.hideKeyboard
+import com.aliceresponde.countingapp.presentation.common.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class CreateCounterFragment : Fragment() {
+class CreateCounterFragment : BaseAppFragment(R.layout.fragment_create_counter) {
 
-    lateinit var binding: FragmentCreateCounterBinding
+    private val binding by viewBinding(FragmentCreateCounterBinding::bind)
     private val viewModel: CreateCounterViewModel by viewModels()
 
-    @Inject
-    lateinit var networkConnection: NetworkConnection
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupUi()
+        setupObservers()
+    }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
-        binding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_create_counter, container, false)
+    override fun setupUi() {
+        super.setupUi()
         binding.apply {
             lifecycleOwner = this@CreateCounterFragment
             viewModel = this@CreateCounterFragment.viewModel
@@ -44,9 +46,7 @@ class CreateCounterFragment : Fragment() {
                 findNavController().navigate(action)
             }
 
-            cruzBtn.setOnClickListener {
-                viewModel?.onCruzClicked()
-            }
+            cruzBtn.setOnClickListener { viewModel?.onCruzClicked() }
 
             saveBtn.setOnClickListener {
                 hideKeyboard()
@@ -57,18 +57,14 @@ class CreateCounterFragment : Fragment() {
                 )
             }
         }
-
-        setupObservers()
-
-        return binding.root
     }
 
-    private fun FragmentCreateCounterBinding.clearTitle() {
-        counterTitleEdit.text?.clear()
+    private fun clearTitle() {
+        binding.counterTitleEdit.text?.clear()
         hideKeyboard()
     }
 
-    private fun setupObservers() {
+    override fun setupObservers() {
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String>("counter_title")
             ?.observe(viewLifecycleOwner, Observer {
                 binding.counterTitleEdit.setText(it)
@@ -86,8 +82,7 @@ class CreateCounterFragment : Fragment() {
         })
         viewModel.showInternetError.observe(viewLifecycleOwner) { showNoInternetDialog() }
         viewModel.clearTitle.observe(viewLifecycleOwner, EventObserver {
-            if (it)
-                binding.counterTitleEdit.setText("")
+            if (it) clearTitle()
         })
         viewModel.showCreateCounterError.observe(viewLifecycleOwner) {
             if (!it.hasBeenHandled)

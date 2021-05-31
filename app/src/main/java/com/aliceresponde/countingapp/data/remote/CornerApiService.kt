@@ -7,6 +7,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
+import java.util.concurrent.TimeUnit
 
 interface CornerApiService {
     companion object {
@@ -16,6 +17,10 @@ interface CornerApiService {
             }
 
             val okHttpClient = OkHttpClient.Builder()
+                .callTimeout(2, TimeUnit.MINUTES)
+                .connectTimeout(20, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
                 .addInterceptor(interceptor)
                 .addInterceptor(logInterceptor)
                 .build()

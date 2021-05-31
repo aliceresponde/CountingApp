@@ -9,9 +9,13 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.aliceresponde.countingapp.R
 import com.aliceresponde.countingapp.databinding.FragmentCounterSampleBinding
+import com.aliceresponde.countingapp.presentation.common.BaseAppFragment
 import com.aliceresponde.countingapp.presentation.common.getStringArray
+import com.aliceresponde.countingapp.presentation.common.viewBinding
 
-class CounterSampleFragment : Fragment() {
+class CounterSampleFragment : BaseAppFragment(R.layout.fragment_counter_sample) {
+
+    private val binding by viewBinding(FragmentCounterSampleBinding::bind)
 
     private val drinksAdapter: SampleAdapter by lazy {
         SampleAdapter(getStringArray(R.array.drinks), ::backWithSelectedCounter)
@@ -23,23 +27,21 @@ class CounterSampleFragment : Fragment() {
         SampleAdapter(getStringArray(R.array.misc), ::backWithSelectedCounter)
     }
 
-    private lateinit var binding: FragmentCounterSampleBinding
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentCounterSampleBinding.inflate(inflater, container, false).apply {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupUi()
+    }
+
+    override fun setupUi() {
+        super.setupUi()
+        binding.apply {
             drinksRecycler.adapter = drinksAdapter
             foodRecycler.adapter = foodAdapter
             miscRecycler.adapter = miscAdapter
             backView.setOnClickListener { view ->
-                view?.let {
-                    Navigation.findNavController(it).popBackStack()
-                }
+                view?.let { Navigation.findNavController(it).popBackStack() }
             }
         }
-
-        return binding.root
     }
 
     private fun backWithSelectedCounter(title: String) {
