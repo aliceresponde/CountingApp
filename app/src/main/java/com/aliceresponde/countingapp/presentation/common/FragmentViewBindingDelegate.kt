@@ -9,6 +9,9 @@ import androidx.viewbinding.ViewBinding
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
+/**
+ * https://gist.github.com/Zhuinden/ea3189198938bd16c03db628e084a4fa
+ */
 class FragmentViewBindingDelegate<T : ViewBinding>(
     val fragment: Fragment,
     val viewBindingFactory: (View) -> T,
