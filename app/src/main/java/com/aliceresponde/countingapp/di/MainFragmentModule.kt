@@ -22,7 +22,6 @@ object MainFragmentModule {
         increaseCounterUC: IncreaseCounterUseCase,
         decreaseCounterUC: DecreaseCounterUseCase,
         deleteCounterUC: DeleteCounterUseCase,
-        filterDataUC: FilterDataUseCase,
         coroutineDispatcher: CoroutineDispatcher
     ) =
         MainViewModel(
@@ -30,7 +29,7 @@ object MainFragmentModule {
             increaseCounterUC,
             decreaseCounterUC,
             deleteCounterUC,
-            filterDataUC
+            coroutineDispatcher
         )
 
 }

@@ -12,7 +12,6 @@ import com.aliceresponde.countingapp.domain.model.ErrorViewState
 import com.aliceresponde.countingapp.domain.model.SuccessViewState
 import com.aliceresponde.countingapp.domain.usecase.decrease.DecreaseCounterUseCase
 import com.aliceresponde.countingapp.domain.usecase.delete.DeleteCounterUseCase
-import com.aliceresponde.countingapp.domain.usecase.filter.FilterDataUseCase
 import com.aliceresponde.countingapp.domain.usecase.getcounters.GetCountersUseCase
 import com.aliceresponde.countingapp.domain.usecase.increase.IncreaseCounterUseCase
 import com.aliceresponde.countingapp.presentation.common.Event
@@ -28,7 +27,6 @@ class MainViewModel @ViewModelInject constructor(
     private val increaseCounterUC: IncreaseCounterUseCase,
     private val decreaseCounterUC: DecreaseCounterUseCase,
     private val deleteCounterUC: DeleteCounterUseCase,
-    private val filterData: FilterDataUseCase, // todo use flow to get listen db
     private val coroutineDispatcher: CoroutineDispatcher = IO
 ) : ViewModel() {
 
@@ -72,7 +70,7 @@ class MainViewModel @ViewModelInject constructor(
     val decreaseCounterInternetError: LiveData<Event<Counter>> get() = _decreaseCounterInternetError
 
     // TODO use flow to listen the counters then update use cases to do not return data
-    fun synData(isInternetAccess: Boolean) {
+    fun synData() {
         viewModelScope.launch {
             withContext(IO) {
                 showLoading()

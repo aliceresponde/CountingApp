@@ -27,7 +27,7 @@ class MainFragment : BaseAppFragment(R.layout.fragment_main), CounterAdapterList
         super.onViewCreated(view, savedInstanceState)
         setupUi()
         setupObservers()
-        viewModel.synData(networkConnection.isConnected())
+        viewModel.synData()
     }
 
     override fun setupUi() {
@@ -50,12 +50,12 @@ class MainFragment : BaseAppFragment(R.layout.fragment_main), CounterAdapterList
                 navigateToCreateCounterFragment()
             }
             swipeToRefresh.setOnRefreshListener {
-                this@MainFragment.viewModel.synData(networkConnection.isConnected())
+                this@MainFragment.viewModel.synData()
                 swipeToRefresh.isRefreshing = false
             }
             swipeToRefresh.setColorSchemeResources(R.color.orangeColor)
 
-            retry.setOnClickListener { this@MainFragment.viewModel.synData(networkConnection.isConnected()) }
+            retry.setOnClickListener { this@MainFragment.viewModel.synData() }
             cruzBtn.setOnClickListener { this@MainFragment.viewModel.clearCurrentSelection() }
             deleteView.setOnClickListener { showDeleteCounterDialog() }
             shareBtn.setOnClickListener {
