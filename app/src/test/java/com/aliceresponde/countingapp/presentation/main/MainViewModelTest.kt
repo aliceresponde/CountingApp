@@ -4,6 +4,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.lifecycle.Observer
 import com.aliceresponde.countingapp.domain.model.Counter
+import com.aliceresponde.countingapp.domain.model.ErrorViewState
 import com.aliceresponde.countingapp.domain.model.SuccessViewState
 import com.aliceresponde.countingapp.domain.usecase.decrease.DecreaseCounterUseCase
 import com.aliceresponde.countingapp.domain.usecase.delete.DeleteCounterUseCase
@@ -53,10 +54,10 @@ class MainViewModelTest : MockkableTestBase() {
     lateinit var deleteInternetErrorObserver: Observer<Event<Boolean>>
 
     @RelaxedMockK
-    lateinit var increaseCounterErrorObserver: Observer<Event<Counter>>
+    lateinit var increaseCounterInternetErrorObserver: Observer<Event<Counter>>
 
     @RelaxedMockK
-    lateinit var decreaseCounterErrorObserver: Observer<Event<Counter>>
+    lateinit var decreaseCounterInternetErrorObserver: Observer<Event<Counter>>
 
     @RelaxedMockK
     lateinit var getCounterUC: GetCountersUseCase
@@ -96,8 +97,8 @@ class MainViewModelTest : MockkableTestBase() {
             counters.observeForever(countersObserver)
             selectedCounters.observeForever(selectedCountersObserver)
             deleteInternetError.observeForever(deleteInternetErrorObserver)
-            increaseCounterInternetError.observeForever(increaseCounterErrorObserver)
-            decreaseCounterInternetError.observeForever(decreaseCounterErrorObserver)
+            increaseCounterInternetError.observeForever(increaseCounterInternetErrorObserver)
+            decreaseCounterInternetError.observeForever(decreaseCounterInternetErrorObserver)
         }
     }
 
@@ -105,14 +106,133 @@ class MainViewModelTest : MockkableTestBase() {
     fun `syncData() returns empty list then show empty data`() {
         coEvery { getCounterUC.invoke() } answers { SuccessViewState(data = listOf()) }
         sut.synData()
-        coVerifySequence {
+        coVerify {
             initialValues()
             showLoading()
             showEmptyData()
         }
     }
 
-    private fun initialValues() { // 7 initial setup
+    @Test
+    fun `syncData() returns list of counters then show data`() {
+        val data = listOf(counterWithZero)
+        coEvery { getCounterUC.invoke() } answers { SuccessViewState(data = data) }
+        sut.synData()
+        coVerify {
+            initialValues()
+            showLoading()
+            showData(data)
+        }
+    }
+
+    @Test
+    fun `syncData() returns errorViewState`() {
+        val element = Counter("1", "nap", 0)
+        val data = listOf(element)
+        coEvery { getCounterUC.invoke() } answers { ErrorViewState(data = data, message = "") }
+        sut.synData()
+        coVerify {
+            initialValues()
+            showLoading()
+            showInternetError()
+        }
+    }
+
+    @Test
+    fun `increaseCounter without internet access show internet error`() {
+        sut.increaseCounter(counterWithZero, false)
+        verify {
+            initialValues()
+            increaseCounterInternetErrorObserver.onChanged(any())
+        }
+    }
+
+    @Test
+    fun `increaseCounter with internet that is access show data`() {
+        val result = listOf(counterWithZero.copy(count = counterWithZero.count + 1))
+        coEvery { increaseCounterUC(id = counterWithZero.id) } answers { SuccessViewState(result) }
+        sut.increaseCounter(counterWithZero, true)
+        coVerify {
+            initialValues()
+            showLoading()
+            showData(result)
+        }
+    }
+
+    @Test
+    fun `increaseCounter with internet that has error show internet error`() {
+        val result = listOf(counterWithZero.copy(count = counterWithZero.count + 1))
+        coEvery { increaseCounterUC(id = counterWithZero.id) } answers { ErrorViewState("") }
+        sut.increaseCounter(counterWithZero, true)
+        coVerify {
+            initialValues()
+            showLoading()
+            showInternetError()
+        }
+    }
+
+    @Test
+    fun `decreaseCounter with internet failure emit decrease internet error event`() {
+        sut.decreaseCounter(counterWithZero, false)
+        verify {
+            initialValues()
+            decreaseCounterInternetErrorObserver.onChanged(any())
+        }
+    }
+
+    @Test
+    fun `decreaseCounter with zero count just returns`() {
+        sut.decreaseCounter(counterWithZero, false)
+        verify {
+            initialValues()
+        }
+    }
+
+    @Test
+    fun `decreaseCounter with positive count returns success data`() {
+        val result = listOf(counterWithZero)
+        coEvery { decreaseCounterUseCase.invoke("1") } answers {
+            SuccessViewState(listOf(counterWithZero))
+        }
+        sut.decreaseCounter(counterWithZero.copy(count = 2), true)
+        coVerify {
+            initialValues()
+            showLoading()
+            showData(result)
+        }
+    }
+
+    @Test
+    fun `decreaseCounter with positive count returns ErrorViewState showInternetError`() {
+        coEvery { decreaseCounterUseCase.invoke("1") } answers { ErrorViewState("") }
+        sut.decreaseCounter(counterWithZero.copy(count = 2), true)
+        coVerify {
+            initialValues()
+            showLoading()
+            showInternetError()
+        }
+    }
+
+    @Test
+    fun `onFilterResult with empty data show Empty fileterredResult`() {
+        sut.onFilterResult(emptyList())
+        verify {
+            initialValues()
+            showEmptyFilteredResult()
+        }
+    }
+
+    @Test
+    fun `onFilterResult with data then showData`() {
+        val list = listOf(counterWithZero)
+        sut.onFilterResult(list)
+        verify {
+            initialValues()
+            showData(list)
+        }
+    }
+
+    private fun initialValues() {
         loadingVisibilityOb.onChanged(GONE)
         searchBarVisibilityObserver.onChanged(VISIBLE)
         selectedItemBarVisibilityObserver.onChanged(GONE)
@@ -199,5 +319,9 @@ class MainViewModelTest : MockkableTestBase() {
         internetErrorVisibilityObserver.onChanged(GONE)
         selectedItemBarVisibilityObserver.onChanged(GONE)
         searchBarVisibilityObserver.onChanged(VISIBLE)
+    }
+
+    companion object {
+        val counterWithZero = Counter("1", "nap", 0)
     }
 }
